@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/02/21 16:18:03 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/02/22 12:27:13 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,16 @@ int	main(int argc, char **argv)
 		return (write(2, "Error\nMust have 4 or 5 arguments\n", 33));
 	if (not_numeric_chars_only(argv))
 		return (write(2, "Error\nNon numeric / empty argument\n", 35));
+	philo = malloc(sizeof(t_philo));
+	if (!philo)
+		return (write(2, "Error\nMalloc of philo structure failed\n", 39));
+	if (init_values(philo, argv))
+	{
+		free(philo);
+		return (write(2, "Error\nValue bigger than int\n", 28));
+	}
 
+
+	free(philo);
 	return (0);
 }
