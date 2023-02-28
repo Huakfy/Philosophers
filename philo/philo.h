@@ -6,24 +6,30 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/02/22 12:24:39 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/02/28 13:01:41 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
+//for write
 # include <unistd.h>
+//for malloc
 # include <stdlib.h>
+//for printf
 # include <stdio.h>
+//for get time of day
+# include <sys/time.h>
 
 typedef struct s_philo
 {
-	int	nb_philo;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	nb_times_to_eat;
+	int				nb_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nb_times_to_eat;
+	struct timeval	*time_of_day_start;
 }	t_philo;
 
 #endif
