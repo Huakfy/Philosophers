@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 11:31:35 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/01 12:09:06 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/01 12:55:03 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ static int	init_values(t_philo	*philo, char **argv)
 			return (1);
 	}
 	philo->time_of_day_start = NULL;
+	philo->threads = NULL;
 	return (0);
 }
 

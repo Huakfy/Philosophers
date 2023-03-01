@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/01 12:03:13 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/01 13:24:30 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <stdio.h>
 //for gettimeofday
 # include <sys/time.h>
+//for threads
+#include <pthread.h>
 
 typedef struct s_philo
 {
@@ -29,7 +31,9 @@ typedef struct s_philo
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				nb_times_to_eat;
+
 	struct timeval	*time_of_day_start;
+	pthread_t		**threads;
 }	t_philo;
 
 //error.c
