@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/01 13:38:14 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/01 13:44:43 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 
 void	*start_routine(void	*arg)
 {
-	t_philo	*philo;
-
-	philo = arg;
-	printf("%d\n", philo->nb_philo);
+	printf("test");
+	(void)arg;
 	return (NULL);
 }
 
