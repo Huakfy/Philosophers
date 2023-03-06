@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/01 13:24:30 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/06 13:49:11 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,13 @@ typedef struct s_philo
 	struct timeval	*time_of_day_start;
 	pthread_t		**threads;
 }	t_philo;
+
+typedef enum	e_state
+{
+	THINKING,
+	HUNGRY,
+	EATING
+}	t_state;
 
 //error.c
 int	write_error(char *error);

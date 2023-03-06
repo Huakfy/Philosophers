@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/06 12:51:57 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/06 14:14:58 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,24 @@ int	main(int argc, char **argv)
 		return (1);
 	if (special_cases(philo))
 		return (0);
+
+
+
+	//Create state array to know current state of philosopher (eat, think, hungry)
+	t_state	*state;
+
+	state = NULL;
+	state = malloc(sizeof(t_state) * (philo->nb_philo + 1));
+	if (!state)
+	{
+		free(philo);
+		return (write_error("Error\nMalloc of state enumeration failed\n"));
+	}
+	state[philo->nb_philo] = NULL;
+
+
+
+
 
 	//Get current epoch time of start
 	philo->time_of_day_start = malloc(sizeof(struct timeval));
@@ -85,6 +103,12 @@ int	main(int argc, char **argv)
 
 	free(philo->time_of_day_start);
 	free(philo->threads);
+
+
+
+
+
+	free(state);
 	free(philo);
 	return (0);
 }
