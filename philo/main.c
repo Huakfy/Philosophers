@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/06 14:14:58 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/06 15:22:52 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	*start_routine(void	*arg)
 {
-	printf("test");
+	printf("test\n");
 	(void)arg;
 	return (NULL);
 }
@@ -37,17 +37,12 @@ int	main(int argc, char **argv)
 	t_state	*state;
 
 	state = NULL;
-	state = malloc(sizeof(t_state) * (philo->nb_philo + 1));
+	state = malloc(sizeof(t_state) * (philo->nb_philo));
 	if (!state)
 	{
 		free(philo);
 		return (write_error("Error\nMalloc of state enumeration failed\n"));
 	}
-	state[philo->nb_philo] = NULL;
-
-
-
-
 
 	//Get current epoch time of start
 	philo->time_of_day_start = malloc(sizeof(struct timeval));
@@ -61,53 +56,38 @@ int	main(int argc, char **argv)
 	}
 
 	//Create a thread for each philosopher
-	philo->threads = malloc(sizeof(pthread_t *) * (philo->nb_philo + 1));
+	philo->threads = malloc(sizeof(pthread_t) * (philo->nb_philo + 1));
 	if (!philo->threads)
 	{
 		free(philo->time_of_day_start);
 		free(philo);
 		return (write_error("Error\nThreads array malloc failed\n"));
 	}
-	philo->threads[philo->nb_philo] = NULL;
 
 	int	i = 0;
 
 	while (i < philo->nb_philo)
 	{
-		philo->threads[i] = malloc(sizeof(pthread_t));
-		if (!philo->threads[i])
+		if (pthread_create(&philo->threads[i], NULL, &start_routine, philo) == -1)
 		{
-			free(philo->time_of_day_start);
 			free(philo->threads);
-			free(philo);
-			return (write_error("Error\nMalloc of thread failed\n"));
-		}
-		if (pthread_create(philo->threads[i], NULL, &start_routine, philo) == -1)
-		{
 			free(philo->time_of_day_start);
-			free(philo->threads);
 			free(philo);
-			//free (created threads)
 			return (write_error("Error\nThread creation failed\n"));
 		}
 		i++;
 	}
 
+	//Free all
 	i = 0;
 	while (i < philo->nb_philo)
 	{
-		//close threads
-		free(philo->threads[i]);
+		pthread_join(philo->threads[i], NULL);
 		i++;
 	}
-
-	free(philo->time_of_day_start);
 	free(philo->threads);
 
-
-
-
-
+	free(philo->time_of_day_start);
 	free(state);
 	free(philo);
 	return (0);
