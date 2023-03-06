@@ -8,7 +8,7 @@ OBJS		=	${SRCS:.c=.o}
 
 CC			=	cc
 
-CFLAGS		=	-g3 -Wall -Werror -Wextra
+CFLAGS		=	-g3 -pthread -Wall -Werror -Wextra
 
 RM			=	rm -f
 

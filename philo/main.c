@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/01 13:44:43 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/06 12:51:57 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,35 @@ int	main(int argc, char **argv)
 		return (write_error("Error\nThreads array malloc failed\n"));
 	}
 	philo->threads[philo->nb_philo] = NULL;
+
 	int	i = 0;
 
 	while (i < philo->nb_philo)
 	{
+		philo->threads[i] = malloc(sizeof(pthread_t));
+		if (!philo->threads[i])
+		{
+			free(philo->time_of_day_start);
+			free(philo->threads);
+			free(philo);
+			return (write_error("Error\nMalloc of thread failed\n"));
+		}
 		if (pthread_create(philo->threads[i], NULL, &start_routine, philo) == -1)
 		{
 			free(philo->time_of_day_start);
 			free(philo->threads);
 			free(philo);
+			//free (created threads)
 			return (write_error("Error\nThread creation failed\n"));
 		}
+		i++;
+	}
+
+	i = 0;
+	while (i < philo->nb_philo)
+	{
+		//close threads
+		free(philo->threads[i]);
 		i++;
 	}
 
