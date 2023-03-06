@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/06 15:18:59 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/06 15:27:01 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_philo
 
 	struct timeval	*time_of_day_start;
 	pthread_t		*threads;
+	int				nb;
 }	t_philo;
 
 typedef enum	e_state
