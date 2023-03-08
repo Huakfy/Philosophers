@@ -6,20 +6,23 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/06 15:40:34 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/08 14:56:29 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 void	*start_routine(void	*arg)
-//void	*start_routine(t_philo	*philo)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	philo->nb += 1;
 	printf("philosopher N°%d\n", philo->nb);
-	printf("%d\n", philo->nb_philo);
+	//while (1)
+	//{
+
+	//}
 	return (NULL);
 }
 
@@ -68,12 +71,17 @@ int	main(int argc, char **argv)
 		return (write_error("Error\nThreads array malloc failed\n"));
 	}
 
+	philo->test = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(philo->test, NULL);
+	pthread_mutex_lock(philo->test);
+	pthread_mutex_unlock(philo->test);
+	free(philo->test);
+
 	int	i = 0;
 
+	philo->nb = 0;
 	while (i < philo->nb_philo)
 	{
-		philo->nb = i + 1;
-		printf("%d\n",i + 1);
 		if (pthread_create(&philo->threads[i], NULL, &start_routine, philo) == -1)
 		{
 			free(philo->threads);
