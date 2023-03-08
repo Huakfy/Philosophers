@@ -1,4 +1,7 @@
-philo
+*
+!*.c
+!*.h
+!Makefile
 
 # Prerequisites
 *.d
