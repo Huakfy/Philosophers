@@ -6,11 +6,9 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/10 11:58:47 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/10 15:41:02 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//Revoir l'initialisation des valeurs pour free facilement + essayer chaque erreur
 
 #include "philo.h"
 
@@ -25,6 +23,33 @@ void	*start_routine(void	*arg)
 
 	//}
 	return (NULL);
+}
+
+void	free_philo(t_philo *philo)
+{
+	int	i;
+
+	if (philo->forks)
+		free(philo->forks);
+	i = 0;
+	while (i < philo->nb_philo && philo->threads && philo->threads[i])
+	{
+		pthread_join(philo->threads[i], NULL);
+		i++;
+	}
+	if (philo->threads)
+		free(philo->threads);
+	i = 0;
+	while (i < philo->nb_philo && philo->philosopher && philo->philosopher[i])
+	{
+		free(philo->philosopher[i]);
+		i++;
+	}
+	if (philo->philosopher)
+		free(philo->philosopher);
+	if (philo->time_of_day_start)
+		free(philo->time_of_day_start);
+	free(philo);
 }
 
 int	main(int argc, char **argv)
@@ -61,12 +86,13 @@ int	main(int argc, char **argv)
 	//Get current epoch time of start
 	philo->time_of_day_start = malloc(sizeof(struct timeval));
 	if (!philo->time_of_day_start)
+	{
+		free_philo(philo);
 		return (write_error("Error\nMalloc of timeval structure failed\n"));
+	}
 	if (gettimeofday(philo->time_of_day_start, NULL) == -1)
 	{
-		free(philo->time_of_day_start);
-		free(philo->forks);
-		free(philo);
+		free_philo(philo);
 		return (write_error("Error\ngettimeofday returned error\n"));
 	}
 
@@ -91,9 +117,7 @@ int	main(int argc, char **argv)
 	philo->threads = malloc(sizeof(pthread_t) * philo->nb_philo);
 	if (!philo->threads)
 	{
-		free(philo->time_of_day_start);
-		free(philo->forks);
-		free(philo);
+		free_philo(philo);
 		return (write_error("Error\nThreads array malloc failed\n"));
 	}
 
@@ -101,10 +125,7 @@ int	main(int argc, char **argv)
 	philo->philosopher = malloc(sizeof(t_philosopher *) * philo->nb_philo);
 	if (!philo->philosopher)
 	{
-		free(philo->time_of_day_start);
-		free(philo->threads);
-		free(philo->forks);
-		free(philo);
+		free_philo(philo);
 		return (write_error("Error\nPhilosopher array malloc failed\n"));
 	}
 
@@ -115,16 +136,7 @@ int	main(int argc, char **argv)
 		philo->philosopher[i] = malloc(sizeof(t_philo));
 		if (!philo->philosopher[i])
 		{
-			free(philo->time_of_day_start);
-			free(philo->threads);
-			i = 0;
-			while(i < philo->nb_philo && philo->philosopher[i])
-			{
-				free(philo->philosopher[i]);
-				i++;
-			}
-			free(philo->forks);
-			free(philo);
+			free_philo(philo);
 			return (write_error("Error\nPhilosopher structure malloc failed\n"));
 		}
 		//Initiate all values
@@ -138,38 +150,14 @@ int	main(int argc, char **argv)
 		//Initiate each thread
 		if (pthread_create(&philo->threads[i], NULL, &start_routine, philo->philosopher[i]) == -1)
 		{
-			free(philo->threads);
-			free(philo->time_of_day_start);
-			free(philo->forks);
-			free(philo);
+			free_philo(philo);
 			return (write_error("Error\nThread creation failed\n"));
 		}
 		i++;
 	}
 
 	//Free all
-	free(philo->forks);
-
-	i = 0;
-	while (i < philo->nb_philo)
-	{
-		pthread_join(philo->threads[i], NULL);
-		i++;
-	}
-	free(philo->threads);
-
-	i = 0;
-	while (i < philo->nb_philo)
-	{
-		free(philo->philosopher[i]);
-		i++;
-	}
-	free(philo->philosopher);
-
-	//free(philo->test);
-
-	free(philo->time_of_day_start);
-	free(philo);
+	free_philo(philo);
 	return (0);
 }
 

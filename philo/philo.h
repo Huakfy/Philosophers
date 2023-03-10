@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/10 11:51:41 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/10 15:07:56 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_philo
 
 	struct timeval	*time_of_day_start;
 	pthread_t		*threads;
-	pthread_mutex_t	*test;
+	//pthread_mutex_t	*test;
 	t_philosopher	**philosopher;
 }	t_philo;
 
