@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/08 12:05:30 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/10 11:51:41 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,23 @@
 //for threads
 #include <pthread.h>
 
+typedef struct s_philosopher
+{
+	int				nb_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nb_times_to_eat;
+	struct timeval	*time_of_day_start;
+	int				index;
+}	t_philosopher;
+
+typedef enum	e_state
+{
+	AVAILABLE,
+	USED
+}	t_state;
+
 typedef struct s_philo
 {
 	int				nb_philo;
@@ -32,18 +49,13 @@ typedef struct s_philo
 	int				time_to_sleep;
 	int				nb_times_to_eat;
 
+	t_state			*forks;
+
 	struct timeval	*time_of_day_start;
 	pthread_t		*threads;
-	int				nb;
 	pthread_mutex_t	*test;
+	t_philosopher	**philosopher;
 }	t_philo;
-
-typedef enum	e_state
-{
-	THINKING,
-	HUNGRY,
-	EATING
-}	t_state;
 
 //error.c
 int	write_error(char *error);
