@@ -6,24 +6,11 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 12:06:57 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 12:17:08 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	*start_routine(void	*arg)
-{
-	t_philosopher	*philosopher;
-
-	philosopher = (t_philosopher *)arg;
-	printf("philosopher N°%d\n", philosopher->index);
-	//while (1)
-	//{
-
-	//}
-	return (NULL);
-}
 
 int	main(int argc, char **argv)
 {
@@ -39,34 +26,8 @@ int	main(int argc, char **argv)
 	if (init_prerequisites(philo))
 		return (2);
 
-	int	i;
-
-	i = 0;
-	while (i < philo->nb_philo)
-	{
-		//Create each philosopher struct
-		philo->philosopher[i] = malloc(sizeof(t_philo));
-		if (!philo->philosopher[i])
-		{
-			free_philo(philo);
-			return (write_error("Error\nPhilosopher structure malloc failed\n"));
-		}
-		//Initiate all values
-		philo->philosopher[i]->nb_philo = philo->nb_philo;
-		philo->philosopher[i]->time_to_die = philo->time_to_die;
-		philo->philosopher[i]->time_to_eat = philo->time_to_eat;
-		philo->philosopher[i]->time_to_sleep = philo->time_to_sleep;
-		philo->philosopher[i]->nb_times_to_eat = philo->nb_times_to_eat;
-		philo->philosopher[i]->time_of_day_start = philo->time_of_day_start;
-		philo->philosopher[i]->index = i + 1;
-		//Initiate each thread
-		if (pthread_create(&philo->threads[i], NULL, &start_routine, philo->philosopher[i]) == -1)
-		{
-			free_philo(philo);
-			return (write_error("Error\nThread creation failed\n"));
-		}
-		i++;
-	}
+	if (init_threads(philo))
+		return (3);
 
 	//Free all
 	free_philo(philo);
