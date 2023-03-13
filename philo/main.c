@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 12:17:08 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 15:52:47 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int	main(int argc, char **argv)
 		return (0);
 	if (init_prerequisites(philo))
 		return (2);
-
 	if (init_threads(philo))
 		return (3);
 
@@ -43,7 +42,6 @@ int	main(int argc, char **argv)
 //printf("ms:%ld\n",((now->tv_sec - philo->time_of_day_start->tv_sec) * 1000)
 //	+ ((now->tv_usec - philo->time_of_day_start->tv_usec) / 1000));
 //free(now);
-//free(philo->time_of_day_start);
 
 //une action a la fois
 //donner un nombre de 1 a n

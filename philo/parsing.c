@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 11:31:35 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 11:05:11 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 15:04:56 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,6 @@ static int	ft_atoi(const char *str)
 //Init values
 static int	init_values(t_philo	*philo, char **argv)
 {
-	philo->nb_philo = -1;
-	philo->time_to_die = -1;
-	philo->time_to_eat = -1;
-	philo->time_to_sleep = -1;
 	philo->nb_times_to_eat = -1;
 	philo->nb_philo = ft_atoi(argv[1]);
 	philo->time_to_die = ft_atoi(argv[2]);
@@ -75,6 +71,7 @@ static int	init_values(t_philo	*philo, char **argv)
 			return (1);
 	}
 	philo->time_of_day_start = NULL;
+	philo->now = NULL;
 	philo->threads = NULL;
 	philo->philosopher = NULL;
 	philo->forks = NULL;

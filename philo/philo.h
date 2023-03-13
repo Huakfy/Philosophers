@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 12:30:13 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 15:01:47 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_philosopher
 	t_state			*forks;
 	//time of threads start
 	struct timeval	*time_of_day_start;
+	struct timeval	*now;
 	//mutexes
 	pthread_mutex_t	*print;
 	pthread_mutex_t	*toggle_fork;
@@ -61,6 +62,7 @@ typedef struct s_philo
 	t_state			*forks;
 	//time of threads start
 	struct timeval	*time_of_day_start;
+	struct timeval	*now;
 	//philosopher threads
 	pthread_t		*threads;
 	//mutexes
