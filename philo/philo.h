@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/10 15:07:56 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 11:59:20 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,22 @@ typedef struct s_philo
 
 	struct timeval	*time_of_day_start;
 	pthread_t		*threads;
-	//pthread_mutex_t	*test;
+	pthread_mutex_t	*print;
+	pthread_mutex_t	*toggle_fork;
 	t_philosopher	**philosopher;
 }	t_philo;
 
 //error.c
-int	write_error(char *error);
+int		write_error(char *error);
 
 //parsing.c
-int	parsing(int argc, char **argv, t_philo *philo);
-int	special_cases(t_philo *philo);
+int		parsing(int argc, char **argv, t_philo *philo);
+int		special_cases(t_philo *philo);
+
+//free.c
+void	free_philo(t_philo *philo);
+
+//prerequisites.c
+int	init_prerequisites(t_philo *philo);
 
 #endif

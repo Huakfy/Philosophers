@@ -1,6 +1,6 @@
 NAME		=	philo
 
-SRCS		=	main.c error.c parsing.c
+SRCS		=	main.c error.c parsing.c free.c prerequisites.c
 
 HEADER		=	philo.h
 

@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/10 15:43:16 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 12:06:57 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,33 +25,6 @@ void	*start_routine(void	*arg)
 	return (NULL);
 }
 
-void	free_philo(t_philo *philo)
-{
-	int	i;
-
-	if (philo->forks)
-		free(philo->forks);
-	i = 0;
-	while (i < philo->nb_philo && philo->threads && philo->threads[i])
-	{
-		pthread_join(philo->threads[i], NULL);
-		i++;
-	}
-	if (philo->threads)
-		free(philo->threads);
-	i = 0;
-	while (i < philo->nb_philo && philo->philosopher && philo->philosopher[i])
-	{
-		free(philo->philosopher[i]);
-		i++;
-	}
-	if (philo->philosopher)
-		free(philo->philosopher);
-	if (philo->time_of_day_start)
-		free(philo->time_of_day_start);
-	free(philo);
-}
-
 int	main(int argc, char **argv)
 {
 	t_philo	*philo;
@@ -63,71 +36,10 @@ int	main(int argc, char **argv)
 		return (1);
 	if (special_cases(philo))
 		return (0);
-
-
+	if (init_prerequisites(philo))
+		return (2);
 
 	int	i;
-
-	//Create state array to know current state of each fork (available / used)
-	philo->forks = NULL;
-	philo->forks = malloc(sizeof(t_state) * philo->nb_philo);
-	if (!philo->forks)
-	{
-		free(philo);
-		return (write_error("Error\nMalloc of forks enumeration array failed\n"));
-	}
-	i = 0;
-	while (i < philo->nb_philo)
-	{
-		philo->forks[i] = AVAILABLE;
-		i++;
-	}
-
-	//Get current epoch time of start
-	philo->time_of_day_start = malloc(sizeof(struct timeval));
-	if (!philo->time_of_day_start)
-	{
-		free_philo(philo);
-		return (write_error("Error\nMalloc of timeval structure failed\n"));
-	}
-	if (gettimeofday(philo->time_of_day_start, NULL) == -1)
-	{
-		free_philo(philo);
-		return (write_error("Error\ngettimeofday returned error\n"));
-	}
-
-	////Create mutexs
-	//philo->test = malloc(sizeof(pthread_mutex_t));
-	//if (!philo->test)
-	//{
-	//	free(philo->time_of_day_start);
-	//	free(philo);
-	//	i = 0;
-	//	while (i < philo->nb_philo)
-	//	{
-	//		pthread_join(philo->threads[i], NULL);
-	//		i++;
-	//	}
-	//	free(philo->threads);
-	//	return (write_error("Error\nMutex malloc failed\n"));
-	//}
-	//pthread_mutex_init(philo->test, NULL);
-
-	//Create a thread for each philosopher
-	philo->threads = malloc(sizeof(pthread_t) * philo->nb_philo);
-	if (!philo->threads)
-	{
-		free_philo(philo);
-		return (write_error("Error\nThreads array malloc failed\n"));
-	}
-
-	//Create a philosopher structure for each philosopher
-	philo->philosopher = malloc(sizeof(t_philosopher *) * philo->nb_philo);
-	if (!philo->philosopher)
-	{
-		free_philo(philo);
-		return (write_error("Error\nPhilosopher array malloc failed\n"));
-	}
 
 	i = 0;
 	while (i < philo->nb_philo)

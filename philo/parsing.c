@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 11:31:35 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/10 15:11:17 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/13 11:05:11 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ static int	init_values(t_philo	*philo, char **argv)
 	philo->threads = NULL;
 	philo->philosopher = NULL;
 	philo->forks = NULL;
+	philo->print = NULL;
+	philo->toggle_fork = NULL;
 	return (0);
 }
 
