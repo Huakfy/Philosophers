@@ -6,14 +6,14 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/14 14:50:32 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 15:45:32 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-//for write
+//for write and usleep
 # include <unistd.h>
 //for malloc
 # include <stdlib.h>

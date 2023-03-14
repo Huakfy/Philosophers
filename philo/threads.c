@@ -6,11 +6,19 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/14 14:59:35 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 15:54:47 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	die(t_philosopher *philosopher)
+{
+	pthread_mutex_lock(philosopher->print);
+	gettimeofday(philosopher->now, NULL);
+	printf("%ld %d died\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	pthread_mutex_unlock(philosopher->print);
+}
 
 static void	take_fork(t_state *fork, t_philosopher *philosopher)
 {
@@ -21,14 +29,21 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 	pthread_mutex_unlock(philosopher->print);
 }
 
-static void	eat(t_philosopher *philosopher)
+static int	eat(t_philosopher *philosopher)
 {
+	//if sleep->eat print thinking before
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
 	printf("%ld %d is eating\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	gettimeofday(philosopher->last_time_eaten, NULL);
+	if (philosopher->time_to_eat > philosopher->time_to_die)
+	{
+		usleep((philosopher->time_to_die) * 1000);
+		return (1);
+	}
 	usleep(philosopher->time_to_eat * 1000);
+	return (0);
 }
 
 static int	forks_available(t_philosopher *philosopher)
@@ -78,22 +93,29 @@ static void	put_down_forks(t_philosopher *philosopher)
 	}
 }
 
-void	philo_sleep(t_philosopher *philosopher)
+static int	philo_sleep(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
 	printf("%ld %d is sleeping\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
+	if (philosopher->time_to_sleep > (philosopher->time_to_die + philosopher->time_to_eat))
+	{
+		usleep((philosopher->time_to_die + philosopher->time_to_eat) * 1000);
+		return (1);
+	}
 	usleep(philosopher->time_to_sleep * 1000);
+	return (0);
 }
 
-void	think(t_philosopher *philosopher)
+static void	think(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
 	printf("%ld %d is thinking\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	usleep(philosopher->time_to_eat * 1000);
+	//verify if going to die
 }
 
 static void	*start_routine(void	*arg)
@@ -112,10 +134,21 @@ static void	*start_routine(void	*arg)
 		if (forks_available(philosopher))
 		{
 			//eat
-			eat(philosopher);
+			if (eat(philosopher))
+			{
+				die(philosopher);
+				put_down_forks(philosopher);
+				return (NULL);
+			}
 			put_down_forks(philosopher);
+			//verify if dead
 			//sleep
-			philo_sleep(philosopher);
+			if (philo_sleep(philosopher))
+			{
+				die(philosopher);
+				return (NULL);
+			}
+			//verify if dead
 			//continue ;
 		}
 		else
@@ -159,8 +192,7 @@ int	init_threads(t_philo *philo)
 	int	i;
 
 	printf("time to die: %d time to eat: %d time to sleep: %d nb times to eat: %d\n", philo->time_to_die, philo->time_to_eat, philo->time_to_sleep, philo->nb_times_to_eat);
-	//Lock wathever mutex to wait for every thread to be created
-	pthread_mutex_lock(philo->print);
+	pthread_mutex_lock(philo->print);//Lock wathever mutex to wait for every thread to be created
 	i = 0;
 	while (i < philo->nb_philo)
 	{
@@ -179,9 +211,7 @@ int	init_threads(t_philo *philo)
 		}
 		i++;
 	}
-	//Initialize start time
-	gettimeofday(philo->time_of_day_start, NULL);
-	//Start threads
-	pthread_mutex_unlock(philo->print);
+	gettimeofday(philo->time_of_day_start, NULL);//Initialize start time
+	pthread_mutex_unlock(philo->print);//Start threads
 	return (0);
 }
