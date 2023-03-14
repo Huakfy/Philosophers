@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 15:54:44 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 14:23:57 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,12 @@ static int	init_forks(t_philo *philo)
 //Get current epoch time of start & malloc now
 static int	init_start_time(t_philo *philo)
 {
+	philo->now = malloc(sizeof(struct timeval));
+	if (!philo->now)
+	{
+		free_philo(philo);
+		return (write_error("Error\nMalloc of now timeval structure failed\n"));
+	}
 	philo->time_of_day_start = malloc(sizeof(struct timeval));
 	if (!philo->time_of_day_start)
 	{
@@ -45,12 +51,6 @@ static int	init_start_time(t_philo *philo)
 	{
 		free_philo(philo);
 		return (write_error("Error\ngettimeofday returned error\n"));
-	}
-	philo->now = malloc(sizeof(struct timeval));
-	if (!philo->now)
-	{
-		free_philo(philo);
-		return (write_error("Error\nMalloc of now timeval structure failed\n"));
 	}
 	return (0);
 }

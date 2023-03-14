@@ -6,19 +6,11 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/14 12:18:25 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 14:59:35 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static void	 eat(t_philosopher *philosopher)
-{
-	pthread_mutex_lock(philosopher->print);
-	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d is eating\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
-	pthread_mutex_unlock(philosopher->print);
-}
 
 static void	take_fork(t_state *fork, t_philosopher *philosopher)
 {
@@ -27,6 +19,16 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 	printf("%ld %d has taken a fork\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
 	*fork = USED;
 	pthread_mutex_unlock(philosopher->print);
+}
+
+static void	eat(t_philosopher *philosopher)
+{
+	pthread_mutex_lock(philosopher->print);
+	gettimeofday(philosopher->now, NULL);
+	printf("%ld %d is eating\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	pthread_mutex_unlock(philosopher->print);
+	gettimeofday(philosopher->last_time_eaten, NULL);
+	usleep(philosopher->time_to_eat * 1000);
 }
 
 static int	forks_available(t_philosopher *philosopher)
@@ -99,6 +101,11 @@ static void	*start_routine(void	*arg)
 	t_philosopher	*philosopher;
 
 	philosopher = (t_philosopher *)arg;
+	//init last_time_eaten to start time
+	gettimeofday(philosopher->last_time_eaten, NULL);
+	//wait for all threads to be created
+	pthread_mutex_lock(philosopher->print);
+	pthread_mutex_unlock(philosopher->print);
 	//while (1)
 	//{
 		//If 2 forks are available take them
@@ -106,7 +113,6 @@ static void	*start_routine(void	*arg)
 		{
 			//eat
 			eat(philosopher);
-			usleep(philosopher->time_to_eat * 1000);
 			put_down_forks(philosopher);
 			//sleep
 			philo_sleep(philosopher);
@@ -123,7 +129,7 @@ static void	*start_routine(void	*arg)
 }
 
 //Initiate all values
-static void	init_philosopher_values(t_philo *philo, int i)
+static int	init_philosopher_values(t_philo *philo, int i)
 {
 	philo->philosopher[i]->nb_philo = philo->nb_philo;
 	philo->philosopher[i]->time_to_die = philo->time_to_die;
@@ -136,6 +142,14 @@ static void	init_philosopher_values(t_philo *philo, int i)
 	philo->philosopher[i]->print = philo->print;
 	philo->philosopher[i]->toggle_fork = philo->toggle_fork;
 	philo->philosopher[i]->index = i + 1;
+	philo->philosopher[i]->nb_times_eaten = 0;
+	philo->philosopher[i]->last_time_eaten = malloc(sizeof(struct timeval));
+	if (!philo->philosopher[i]->last_time_eaten)
+	{
+		free_philo(philo);
+		return (write_error("Error\nMalloc of last_time_eaten timeval structure failed\n"));
+	}
+	return (0);
 }
 
 //Create a philosopher structure for each philosopher, initialize their values
@@ -145,6 +159,8 @@ int	init_threads(t_philo *philo)
 	int	i;
 
 	printf("time to die: %d time to eat: %d time to sleep: %d nb times to eat: %d\n", philo->time_to_die, philo->time_to_eat, philo->time_to_sleep, philo->nb_times_to_eat);
+	//Lock wathever mutex to wait for every thread to be created
+	pthread_mutex_lock(philo->print);
 	i = 0;
 	while (i < philo->nb_philo)
 	{
@@ -154,7 +170,8 @@ int	init_threads(t_philo *philo)
 			free_philo(philo);
 			return (write_error("Error\nPhilosopher structure malloc failed\n"));
 		}
-		init_philosopher_values(philo, i);
+		if (init_philosopher_values(philo, i))
+			return (1);
 		if (pthread_create(&philo->threads[i], NULL, &start_routine, philo->philosopher[i]) == -1)
 		{
 			free_philo(philo);
@@ -162,5 +179,9 @@ int	init_threads(t_philo *philo)
 		}
 		i++;
 	}
+	//Initialize start time
+	gettimeofday(philo->time_of_day_start, NULL);
+	//Start threads
+	pthread_mutex_unlock(philo->print);
 	return (0);
 }

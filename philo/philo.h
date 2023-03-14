@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 15:01:47 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 14:50:32 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,9 @@ typedef struct s_philosopher
 	pthread_mutex_t	*toggle_fork;
 	//philosopher's index
 	int				index;
+	//values to keep track of progress
+	int				nb_times_eaten;
+	struct timeval	*last_time_eaten;
 }	t_philosopher;
 
 typedef struct s_philo

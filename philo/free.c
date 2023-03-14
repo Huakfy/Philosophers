@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 16:41:56 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 14:52:46 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,25 +28,8 @@ static void	free_threads(t_philo *philo)
 	}
 }
 
-void	free_philo(t_philo *philo)
+static void	free_mutexes(t_philo *philo)
 {
-	int	i;
-
-	free_threads(philo);
-	if (philo->forks)
-		free(philo->forks);
-	i = 0;
-	while (i < philo->nb_philo && philo->philosopher && philo->philosopher[i])
-	{
-		free(philo->philosopher[i]);
-		i++;
-	}
-	if (philo->philosopher)
-		free(philo->philosopher);
-	if (philo->time_of_day_start)
-		free(philo->time_of_day_start);
-	if (philo->now)
-		free(philo->now);
 	if (philo->print)
 	{
 		pthread_mutex_destroy(philo->print);
@@ -57,5 +40,28 @@ void	free_philo(t_philo *philo)
 		pthread_mutex_destroy(philo->toggle_fork);
 		free(philo->toggle_fork);
 	}
+}
+
+void	free_philo(t_philo *philo)
+{
+	int	i;
+
+	free_threads(philo);
+	if (philo->forks)
+		free(philo->forks);
+	i = 0;
+	while (i < philo->nb_philo && philo->philosopher && philo->philosopher[i])
+	{
+		free(philo->philosopher[i]->last_time_eaten);
+		free(philo->philosopher[i]);
+		i++;
+	}
+	if (philo->philosopher)
+		free(philo->philosopher);
+	if (philo->time_of_day_start)
+		free(philo->time_of_day_start);
+	if (philo->now)
+		free(philo->now);
+	free_mutexes(philo);
 	free(philo);
 }
