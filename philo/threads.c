@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 17:44:51 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/14 11:23:57 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,19 @@
 
 static void	 eat(t_philosopher *philosopher)
 {
-	if (!pthread_mutex_lock(philosopher->print))
-	{
-		gettimeofday(philosopher->now, NULL);
-		printf("ms:%ld\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000)
-			+ ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000));
-		pthread_mutex_unlock(philosopher->print);
-	}
-	else
-		eat(philosopher);
+	pthread_mutex_lock(philosopher->print);
+	gettimeofday(philosopher->now, NULL);
+	printf("%ld %d  is eating\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	pthread_mutex_unlock(philosopher->print);
 }
 
 static void	take_fork(t_state *fork, t_philosopher *philosopher)
 {
-	if (!pthread_mutex_lock(philosopher->print))
-	{
-		gettimeofday(philosopher->now, NULL);
-		printf("%ld %d has taken a fork\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000)
-				+ ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
-		*fork = USED;
-		pthread_mutex_unlock(philosopher->print);
-	}
-	else
-		take_fork(fork, philosopher);
+	pthread_mutex_lock(philosopher->print);
+	gettimeofday(philosopher->now, NULL);
+	printf("%ld %d has taken a fork\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	*fork = USED;
+	pthread_mutex_unlock(philosopher->print);
 }
 
 static int	forks_available(t_philosopher *philosopher)
@@ -71,17 +61,9 @@ static void	*start_routine(void	*arg)
 	philosopher = (t_philosopher *)arg;
 	//while (1)
 	//{
-		//if (!pthread_mutex_lock(philosopher->toggle_fork))
-		//{
-		//	//See if 2 forks are available
-		//	if (forks_available(philosopher))
-		//		eat(philosopher);
-		//	pthread_mutex_unlock(philosopher->toggle_fork);
-		//}
 	//}
 	pthread_mutex_lock(philosopher->toggle_fork);
 	//See if 2 forks are available
-	printf("%d %d %d %d\n", philosopher->index, philosopher->forks[0], philosopher->forks[1], philosopher->forks[2]);
 	if (forks_available(philosopher))
 		eat(philosopher);
 	printf("%d %d %d %d\n", philosopher->index, philosopher->forks[0], philosopher->forks[1], philosopher->forks[2]);
