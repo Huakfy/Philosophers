@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/14 15:45:32 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 11:09:22 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@ typedef enum	e_state
 	USED
 }	t_state;
 
+typedef enum	e_philo_state
+{
+	START,
+	THINKING,
+	EATING,
+	SLEEPING
+}	t_state_philo;
+
 typedef struct s_philosopher
 {
 	//arguments
@@ -51,6 +59,7 @@ typedef struct s_philosopher
 	//values to keep track of progress
 	int				nb_times_eaten;
 	struct timeval	*last_time_eaten;
+	t_state_philo	state_philo;
 }	t_philosopher;
 
 typedef struct s_philo
@@ -80,7 +89,7 @@ int		write_error(char *error);
 
 //parsing.c
 int		parsing(int argc, char **argv, t_philo *philo);
-int		special_cases(t_philo *philo);
+//int		special_cases(t_philo *philo);
 
 //free.c
 void	free_philo(t_philo *philo);

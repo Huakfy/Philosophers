@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/13 15:52:47 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 10:38:48 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ int	main(int argc, char **argv)
 		return (write_error("Error\nMalloc of philo structure failed\n"));
 	if (parsing(argc, argv, philo))
 		return (1);
-	if (special_cases(philo))
-		return (0);
+	//if (special_cases(philo))
+	//	return (0);
 	if (init_prerequisites(philo))
 		return (2);
 	if (init_threads(philo))

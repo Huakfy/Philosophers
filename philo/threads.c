@@ -6,17 +6,27 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/14 15:54:47 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 11:26:27 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+static long	time_to_ms(struct timeval *time)
+{
+	return ((time->tv_sec * 1000) + (time->tv_usec / 1000));
+}
+
+static long	diff_time(struct timeval *time1, struct timeval *time2)
+{
+	return (time_to_ms(time1) - time_to_ms(time2));
+}
+
 static void	die(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d died\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	printf("%ld %d died\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 }
 
@@ -24,7 +34,7 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d has taken a fork\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	printf("%ld %d has taken a fork\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 	*fork = USED;
 	pthread_mutex_unlock(philosopher->print);
 }
@@ -32,12 +42,14 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 static int	eat(t_philosopher *philosopher)
 {
 	//if sleep->eat print thinking before
+	philosopher->state_philo = EATING;
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d is eating\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	printf("%ld %d is eating\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	gettimeofday(philosopher->last_time_eaten, NULL);
-	if (philosopher->time_to_eat > philosopher->time_to_die)
+	//will the philosopher die while eating ?
+	if (philosopher->time_to_eat >= philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die) * 1000);
 		return (1);
@@ -95,27 +107,41 @@ static void	put_down_forks(t_philosopher *philosopher)
 
 static int	philo_sleep(t_philosopher *philosopher)
 {
+	philosopher->state_philo = SLEEPING;
 	pthread_mutex_lock(philosopher->print);
 	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d is sleeping\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
+	printf("%ld %d is sleeping\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
-	if (philosopher->time_to_sleep > (philosopher->time_to_die + philosopher->time_to_eat))
+	//will the philosopher die while sleeping ?
+	if (philosopher->time_to_sleep + philosopher->time_to_eat >= philosopher->time_to_die)
 	{
-		usleep((philosopher->time_to_die + philosopher->time_to_eat) * 1000);
+		usleep((philosopher->time_to_die - philosopher->time_to_eat) * 1000);
 		return (1);
 	}
 	usleep(philosopher->time_to_sleep * 1000);
 	return (0);
 }
 
-static void	think(t_philosopher *philosopher)
+static int	think(t_philosopher *philosopher)
 {
-	pthread_mutex_lock(philosopher->print);
-	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d is thinking\n",((philosopher->now->tv_sec - philosopher->time_of_day_start->tv_sec) * 1000) + ((philosopher->now->tv_usec - philosopher->time_of_day_start->tv_usec) / 1000), philosopher->index);
-	pthread_mutex_unlock(philosopher->print);
+	int	time_to_think;
+
+	time_to_think = philosopher->time_to_eat;
+	if (philosopher->state_philo != THINKING)
+	{
+		pthread_mutex_lock(philosopher->print);
+		gettimeofday(philosopher->now, NULL);
+		printf("%ld %d is thinking\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+		pthread_mutex_unlock(philosopher->print);
+	}
+	if (diff_time(philosopher->last_time_eaten, philosopher->time_of_day_start) + time_to_think > philosopher->time_to_die)
+	{
+		usleep(philosopher->time_to_die - diff_time(philosopher->last_time_eaten, philosopher->time_of_day_start));
+		return (1);
+	}
 	usleep(philosopher->time_to_eat * 1000);
-	//verify if going to die
+	philosopher->state_philo = THINKING;
+	return (0);
 }
 
 static void	*start_routine(void	*arg)
@@ -128,8 +154,8 @@ static void	*start_routine(void	*arg)
 	//wait for all threads to be created
 	pthread_mutex_lock(philosopher->print);
 	pthread_mutex_unlock(philosopher->print);
-	//while (1)
-	//{
+	while (1)
+	{
 		//If 2 forks are available take them
 		if (forks_available(philosopher))
 		{
@@ -148,16 +174,17 @@ static void	*start_routine(void	*arg)
 				die(philosopher);
 				return (NULL);
 			}
-			//verify if dead
-			//continue ;
 		}
 		else
 		{
 			//think
-			think(philosopher);
-			//continue ;
+			if (think(philosopher))
+			{
+				die(philosopher);
+				return (NULL);
+			}
 		}
-	//}
+	}
 	return (NULL);
 }
 
@@ -182,6 +209,7 @@ static int	init_philosopher_values(t_philo *philo, int i)
 		free_philo(philo);
 		return (write_error("Error\nMalloc of last_time_eaten timeval structure failed\n"));
 	}
+	philo->philosopher[i]->state_philo = START;
 	return (0);
 }
 
@@ -196,7 +224,7 @@ int	init_threads(t_philo *philo)
 	i = 0;
 	while (i < philo->nb_philo)
 	{
-		philo->philosopher[i] = malloc(sizeof(t_philo));
+		philo->philosopher[i] = malloc(sizeof(t_philosopher));
 		if (!philo->philosopher[i])
 		{
 			free_philo(philo);
