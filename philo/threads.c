@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 16:59:53 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 17:29:53 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,21 +52,21 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 	pthread_mutex_unlock(philosopher->print);
 }
 
-static int	verify_nb_times_eaten(t_philosopher *philosopher)
+static void	verify_nb_times_eaten(t_philosopher *philosopher)
 {
 	int	i;
 
 	if (philosopher->nb_times_to_eat == -1)
-		return (0);
+		return ;
 	i = 0;
 	while (i < philosopher->nb_philo)
 	{
 		if (philosopher->philosopher[i]->nb_times_eaten < philosopher->nb_times_to_eat)
-			return (0);
+			return ;
 		i++;
 	}
 	*(philosopher->philo_died) = 1;
-	return (0);
+	return ;
 }
 
 static int	eat(t_philosopher *philosopher)
@@ -81,8 +81,9 @@ static int	eat(t_philosopher *philosopher)
 	}
 	gettimeofday(philosopher->now, NULL);
 	printf("%ld %d is eating\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
-	pthread_mutex_unlock(philosopher->print);
 	philosopher->nb_times_eaten++;
+	verify_nb_times_eaten(philosopher);
+	pthread_mutex_unlock(philosopher->print);
 	gettimeofday(philosopher->last_time_eaten, NULL);
 	//will the philosopher die while eating ?
 	if (philosopher->time_to_eat >= philosopher->time_to_die)
@@ -91,7 +92,7 @@ static int	eat(t_philosopher *philosopher)
 		return (1);
 	}
 	usleep(philosopher->time_to_eat * 1000);
-	return (verify_nb_times_eaten(philosopher));
+	return (0);
 }
 
 static int	forks_available(t_philosopher *philosopher)
