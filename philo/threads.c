@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 11:26:27 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 15:11:35 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ static void	die(t_philosopher *philosopher)
 	gettimeofday(philosopher->now, NULL);
 	printf("%ld %d died\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
+	philosopher->state_philo = DEAD;
 }
 
 static void	take_fork(t_state *fork, t_philosopher *philosopher)
@@ -60,15 +61,17 @@ static int	eat(t_philosopher *philosopher)
 
 static int	forks_available(t_philosopher *philosopher)
 {
-	pthread_mutex_lock(philosopher->toggle_fork);
+	//pthread_mutex_lock(philosopher->toggle_fork);
 	if (philosopher->index != philosopher->nb_philo)
 	{
 		if (philosopher->forks[philosopher->index - 1] == AVAILABLE
 			&& philosopher->forks[philosopher->index] == AVAILABLE)
 		{
+			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
+			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index]);
 			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
 			take_fork(&philosopher->forks[philosopher->index], philosopher);
-			pthread_mutex_unlock(philosopher->toggle_fork);
+			//pthread_mutex_unlock(philosopher->toggle_fork);
 			return (1);
 		}
 	}
@@ -77,13 +80,15 @@ static int	forks_available(t_philosopher *philosopher)
 		if (philosopher->forks[philosopher->index - 1] == AVAILABLE
 			&& philosopher->forks[0] == AVAILABLE)
 		{
+			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
+			pthread_mutex_lock(philosopher->toggle_fork[0]);
 			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
 			take_fork(&philosopher->forks[0], philosopher);
-			pthread_mutex_unlock(philosopher->toggle_fork);
+			//pthread_mutex_unlock(philosopher->toggle_fork);
 			return (1);
 		}
 	}
-	pthread_mutex_unlock(philosopher->toggle_fork);
+	//pthread_mutex_unlock(philosopher->toggle_fork);
 	return (0);
 }
 
@@ -91,17 +96,17 @@ static void	put_down_forks(t_philosopher *philosopher)
 {
 	if (philosopher->index != philosopher->nb_philo)
 	{
-		pthread_mutex_lock(philosopher->toggle_fork);
 		philosopher->forks[philosopher->index - 1] = AVAILABLE;
 		philosopher->forks[philosopher->index] = AVAILABLE;
-		pthread_mutex_unlock(philosopher->toggle_fork);
+		pthread_mutex_unlock(philosopher->toggle_fork[philosopher->index - 1]);
+		pthread_mutex_unlock(philosopher->toggle_fork[philosopher->index]);
 	}
 	else
 	{
-		pthread_mutex_lock(philosopher->toggle_fork);
 		philosopher->forks[philosopher->index - 1] = AVAILABLE;
 		philosopher->forks[0] = AVAILABLE;
-		pthread_mutex_unlock(philosopher->toggle_fork);
+		pthread_mutex_unlock(philosopher->toggle_fork[philosopher->index - 1]);
+		pthread_mutex_unlock(philosopher->toggle_fork[0]);
 	}
 }
 
@@ -126,7 +131,8 @@ static int	think(t_philosopher *philosopher)
 {
 	int	time_to_think;
 
-	time_to_think = philosopher->time_to_eat;
+	//time_to_think = philosopher->time_to_eat;
+	time_to_think = 1;
 	if (philosopher->state_philo != THINKING)
 	{
 		pthread_mutex_lock(philosopher->print);

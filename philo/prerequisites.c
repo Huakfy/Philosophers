@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/14 15:36:43 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 15:03:09 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ static int	init_start_time(t_philo *philo)
 //Create mutexs
 static int	init_mutex(t_philo *philo)
 {
+	int	i;
+
 	philo->print = malloc(sizeof(pthread_mutex_t));
 	if (!philo->print)
 	{
@@ -65,13 +67,25 @@ static int	init_mutex(t_philo *philo)
 		return (write_error("Error\nPrint mutex malloc failed\n"));
 	}
 	pthread_mutex_init(philo->print, NULL);
-	philo->toggle_fork = malloc(sizeof(pthread_mutex_t));
+	philo->toggle_fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
 	if (!philo->toggle_fork)
 	{
 		free_philo(philo);
 		return (write_error("Error\nToggle_fork mutex malloc failed\n"));
 	}
-	pthread_mutex_init(philo->toggle_fork, NULL);
+	i = 0;
+	while (i < philo->nb_philo)
+	{
+		philo->toggle_fork[i] = NULL;
+		philo->toggle_fork[i] = malloc(sizeof(pthread_mutex_t));
+		if (!philo->toggle_fork[i])
+		{
+			free_philo(philo);
+			return (write_error("Error\nToggle_fork mutex malloc failed\n"));
+		}
+		pthread_mutex_init(philo->toggle_fork[i], NULL);
+		i++;
+	}
 	return (0);
 }
 

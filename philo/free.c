@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 11:10:26 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 15:05:19 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ static void	free_threads(t_philo *philo)
 
 static void	free_mutexes(t_philo *philo)
 {
+	int	i;
+
 	if (philo->print)
 	{
 		pthread_mutex_destroy(philo->print);
@@ -37,7 +39,13 @@ static void	free_mutexes(t_philo *philo)
 	}
 	if (philo->toggle_fork)
 	{
-		pthread_mutex_destroy(philo->toggle_fork);
+		i = 0;
+		while (i < philo->nb_philo && philo->toggle_fork[i])
+		{
+			pthread_mutex_destroy(philo->toggle_fork[i]);
+			free(philo->toggle_fork[i]);
+			i++;
+		}
 		free(philo->toggle_fork);
 	}
 }

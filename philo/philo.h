@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 11:09:22 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 14:59:07 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef enum	e_philo_state
 	START,
 	THINKING,
 	EATING,
-	SLEEPING
+	SLEEPING,
+	DEAD
 }	t_state_philo;
 
 typedef struct s_philosopher
@@ -53,7 +54,7 @@ typedef struct s_philosopher
 	struct timeval	*now;
 	//mutexes
 	pthread_mutex_t	*print;
-	pthread_mutex_t	*toggle_fork;
+	pthread_mutex_t	**toggle_fork;
 	//philosopher's index
 	int				index;
 	//values to keep track of progress
@@ -79,7 +80,7 @@ typedef struct s_philo
 	pthread_t		*threads;
 	//mutexes
 	pthread_mutex_t	*print;
-	pthread_mutex_t	*toggle_fork;
+	pthread_mutex_t	**toggle_fork;
 	//philosophers
 	t_philosopher	**philosopher;
 }	t_philo;
