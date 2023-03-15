@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 14:59:07 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/15 16:31:21 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,25 +42,27 @@ typedef enum	e_philo_state
 typedef struct s_philosopher
 {
 	//arguments
-	int				nb_philo;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				nb_times_to_eat;
+	int						nb_philo;
+	int						time_to_die;
+	int						time_to_eat;
+	int						time_to_sleep;
+	int						nb_times_to_eat;
 	//enum to know forks state
-	t_state			*forks;
+	t_state					*forks;
 	//time of threads start
-	struct timeval	*time_of_day_start;
-	struct timeval	*now;
+	struct timeval			*time_of_day_start;
+	struct timeval			*now;
 	//mutexes
-	pthread_mutex_t	*print;
-	pthread_mutex_t	**toggle_fork;
+	pthread_mutex_t			*print;
+	pthread_mutex_t			**toggle_fork;
 	//philosopher's index
-	int				index;
+	int						index;
 	//values to keep track of progress
-	int				nb_times_eaten;
-	struct timeval	*last_time_eaten;
-	t_state_philo	state_philo;
+	int						nb_times_eaten;
+	struct timeval			*last_time_eaten;
+	t_state_philo			state_philo;
+	int						*philo_died;
+	struct s_philosopher	**philosopher;
 }	t_philosopher;
 
 typedef struct s_philo
@@ -83,6 +85,8 @@ typedef struct s_philo
 	pthread_mutex_t	**toggle_fork;
 	//philosophers
 	t_philosopher	**philosopher;
+	//track if a philo died
+	int				philo_died;
 }	t_philo;
 
 //error.c
