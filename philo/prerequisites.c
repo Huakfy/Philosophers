@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 15:45:08 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:52:53 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,38 +32,10 @@ static int	init_forks(t_philo *philo)
 	return (0);
 }
 
-//Get current epoch time of start & malloc now
-int	init_start_time(t_philo *philo)
-{
-	struct timeval	start;
-
-	if (gettimeofday(&start, NULL) == -1)
-	{
-		free_philo(philo);
-		return (write_error("Error\ngettimeofday returned error\n"));
-	}
-	philo->time_of_day_start = (start.tv_sec * 1000) + (start.tv_usec / 1000);
-	return (0);
-}
-
-//Create mutexs
-static int	init_mutex(t_philo *philo)
+static int	init_mutex_toggle_fork(t_philo *philo)
 {
 	int	i;
 
-	philo->print = malloc(sizeof(pthread_mutex_t));
-	if (!philo->print)
-	{
-		free_philo(philo);
-		return (write_error("Error\nPrint mutex malloc failed\n"));
-	}
-	pthread_mutex_init(philo->print, NULL);
-	philo->toggle_fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
-	if (!philo->toggle_fork)
-	{
-		free_philo(philo);
-		return (write_error("Error\nToggle_fork mutex malloc failed\n"));
-	}
 	i = 0;
 	while (i < philo->nb_philo)
 	{
@@ -78,6 +50,25 @@ static int	init_mutex(t_philo *philo)
 		i++;
 	}
 	return (0);
+}
+
+//Create mutexs
+static int	init_mutex(t_philo *philo)
+{
+	philo->print = malloc(sizeof(pthread_mutex_t));
+	if (!philo->print)
+	{
+		free_philo(philo);
+		return (write_error("Error\nPrint mutex malloc failed\n"));
+	}
+	pthread_mutex_init(philo->print, NULL);
+	philo->toggle_fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
+	if (!philo->toggle_fork)
+	{
+		free_philo(philo);
+		return (write_error("Error\nToggle_fork mutex malloc failed\n"));
+	}
+	return (init_mutex_toggle_fork(philo));
 }
 
 //Create a thread for each philosopher
@@ -103,7 +94,7 @@ static int	init_threads_and_philosopher(t_philo *philo)
 int	init_prerequisites(t_philo *philo)
 {
 	if (init_forks(philo) || init_mutex(philo)
-		|| init_threads_and_philosopher(philo) || init_start_time(philo))
+		|| init_threads_and_philosopher(philo))
 		return (1);
 	return (0);
 }

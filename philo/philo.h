@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 16:07:21 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 17:18:11 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,22 @@ void	free_philo(t_philo *philo);
 
 //prerequisites.c
 int		init_prerequisites(t_philo *philo);
-int		init_start_time(t_philo *philo);
 
 //threads.c
 int		init_threads(t_philo *philo);
+
+//eat_sleep_think.c
+int		eat(t_philosopher *philosopher);
+int		philo_sleep(t_philosopher *philosopher);
+int		think(t_philosopher *philosopher);
+void	*die(t_philosopher *philosopher);
+
+//forks_utils.c
+int		forks_available(t_philosopher *philosopher);
+void	put_down_forks(t_philosopher *philosopher);
+
+//time.c
+int		init_start_time(t_philo *philo);
+long	now_time(t_philosopher *philosopher);
 
 #endif
