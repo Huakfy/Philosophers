@@ -6,20 +6,17 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 11:59:16 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 15:36:40 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static long	time_to_ms(struct timeval *time)
-{
-	return ((time->tv_sec * 1000) + (time->tv_usec / 1000));
-}
 
 static long	diff_time(struct timeval *time1, struct timeval *time2)
 {
-	return (time_to_ms(time1) - time_to_ms(time2));
+	return (((time1->tv_sec * 1000) + (time1->tv_usec / 1000))
+		- ((time2->tv_sec * 1000) + (time2->tv_usec / 1000)));
 }
 
 static void	*die(t_philosopher *philosopher)
@@ -104,8 +101,8 @@ static int	forks_available(t_philosopher *philosopher)
 			&& philosopher->forks[philosopher->index] == AVAILABLE)
 		{
 			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
-			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index]);
 			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
+			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index]);
 			take_fork(&philosopher->forks[philosopher->index], philosopher);
 			return (1);
 		}
@@ -116,8 +113,8 @@ static int	forks_available(t_philosopher *philosopher)
 			&& philosopher->forks[0] == AVAILABLE)
 		{
 			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
-			pthread_mutex_lock(philosopher->toggle_fork[0]);
 			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
+			pthread_mutex_lock(philosopher->toggle_fork[0]);
 			take_fork(&philosopher->forks[0], philosopher);
 			return (1);
 		}
@@ -271,13 +268,16 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	return (0);
 }
 
+//Lock wathever mutex to wait for every thread to be created
 //Create a philosopher structure for each philosopher, initialize their values
-//and start the threads
+//Create the threads
+//Initialize start time
+//Wait for evzey threads to be created and start threads
 int	init_threads(t_philo *philo)
 {
 	int	i;
 
-	pthread_mutex_lock(philo->print);//Lock wathever mutex to wait for every thread to be created
+	pthread_mutex_lock(philo->print);
 	i = 0;
 	while (i < philo->nb_philo)
 	{
@@ -296,7 +296,7 @@ int	init_threads(t_philo *philo)
 		}
 		i++;
 	}
-	gettimeofday(philo->time_of_day_start, NULL);//Initialize start time
-	pthread_mutex_unlock(philo->print);//Start threads
+	gettimeofday(philo->time_of_day_start, NULL);
+	pthread_mutex_unlock(philo->print);
 	return (0);
 }

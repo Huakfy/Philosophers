@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 11:31:35 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 15:41:48 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 15:14:55 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,21 +106,3 @@ int	parsing(int argc, char **argv, t_philo *philo)
 	}
 	return (0);
 }
-
-//Some special cases
-//int	special_cases(t_philo *philo)
-//{
-//	if (philo->nb_philo == 1)
-//	{
-//		usleep(philo->time_to_die * 1000);
-//		printf("%d 1 died\n", philo->time_to_die);
-//		free(philo);
-//		return (1);
-//	}
-//	if (philo->nb_times_to_eat == 0)
-//	{
-//		free(philo);
-//		return (1);
-//	}
-//	return (0);
-//}
