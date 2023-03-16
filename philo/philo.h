@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 15:29:37 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:07:21 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,7 @@ typedef struct s_philosopher
 	//enum to know forks state
 	t_state					*forks;
 	//time of threads start
-	struct timeval			*time_of_day_start;
-	struct timeval			*now;
+	long					*time_of_day_start;
 	//mutexes
 	pthread_mutex_t			*print;
 	pthread_mutex_t			**toggle_fork;
@@ -59,7 +58,7 @@ typedef struct s_philosopher
 	int						index;
 	//values to keep track of progress
 	int						nb_times_eaten;
-	struct timeval			*last_time_eaten;
+	long					last_time_eaten;
 	t_state_philo			state_philo;
 	int						*philo_died;
 	struct s_philosopher	**philosopher;
@@ -76,8 +75,7 @@ typedef struct s_philo
 	//enum to know forks state
 	t_state			*forks;
 	//time of threads start
-	struct timeval	*time_of_day_start;
-	struct timeval	*now;
+	long			time_of_day_start;
 	//philosopher threads
 	pthread_t		*threads;
 	//mutexes
@@ -94,15 +92,15 @@ int		write_error(char *error);
 
 //parsing.c
 int		parsing(int argc, char **argv, t_philo *philo);
-//int		special_cases(t_philo *philo);
 
 //free.c
 void	free_philo(t_philo *philo);
 
 //prerequisites.c
-int	init_prerequisites(t_philo *philo);
+int		init_prerequisites(t_philo *philo);
+int		init_start_time(t_philo *philo);
 
 //threads.c
-int	init_threads(t_philo *philo);
+int		init_threads(t_philo *philo);
 
 #endif

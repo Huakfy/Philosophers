@@ -6,17 +6,19 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 15:36:40 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:05:32 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-
-static long	diff_time(struct timeval *time1, struct timeval *time2)
+static long	now_time(t_philosopher *philosopher)
 {
-	return (((time1->tv_sec * 1000) + (time1->tv_usec / 1000))
-		- ((time2->tv_sec * 1000) + (time2->tv_usec / 1000)));
+	struct timeval	now;
+
+	gettimeofday(&now, NULL);
+	return (((now.tv_sec * 1000) + (now.tv_usec / 1000))
+		- *(philosopher->time_of_day_start));
 }
 
 static void	*die(t_philosopher *philosopher)
@@ -27,8 +29,7 @@ static void	*die(t_philosopher *philosopher)
 		pthread_mutex_unlock(philosopher->print);
 		return (0);
 	}
-	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d died\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+	printf("%ld %d died\n",now_time(philosopher), philosopher->index);
 	*(philosopher->philo_died) = 1;
 	philosopher->state_philo = DEAD;
 	pthread_mutex_unlock(philosopher->print);
@@ -43,8 +44,7 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 		pthread_mutex_unlock(philosopher->print);
 		return ;
 	}
-	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d has taken a fork\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+	printf("%ld %d has taken a fork\n",now_time(philosopher), philosopher->index);
 	*fork = USED;
 	pthread_mutex_unlock(philosopher->print);
 }
@@ -74,15 +74,15 @@ static int	eat(t_philosopher *philosopher)
 		pthread_mutex_unlock(philosopher->print);
 		return (0);
 	}
-	gettimeofday(philosopher->now, NULL);
 	if (philosopher->state_philo == SLEEPING)
-		printf("%ld %d is thinking\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+		printf("%ld %d is thinking\n",now_time(philosopher), philosopher->index);
 	philosopher->state_philo = EATING;
-	printf("%ld %d is eating\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+	printf("%ld %d is eating\n",now_time(philosopher), philosopher->index);
 	philosopher->nb_times_eaten++;
 	verify_nb_times_eaten(philosopher);
 	pthread_mutex_unlock(philosopher->print);
-	gettimeofday(philosopher->last_time_eaten, NULL);
+
+	philosopher->last_time_eaten = now_time(philosopher);
 	//will the philosopher die while eating ?
 	if (philosopher->time_to_eat >= philosopher->time_to_die)
 	{
@@ -149,8 +149,7 @@ static int	philo_sleep(t_philosopher *philosopher)
 		pthread_mutex_unlock(philosopher->print);
 		return (0);
 	}
-	gettimeofday(philosopher->now, NULL);
-	printf("%ld %d is sleeping\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+	printf("%ld %d is sleeping\n",now_time(philosopher), philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	//will the philosopher die while sleeping ?
 	if (philosopher->time_to_sleep + philosopher->time_to_eat >= philosopher->time_to_die)
@@ -164,7 +163,9 @@ static int	philo_sleep(t_philosopher *philosopher)
 
 static int	think(t_philosopher *philosopher)
 {
-	int	time_to_think;
+	int				time_to_think;
+	struct timeval	now;
+	long			now_ms;
 
 	//time_to_think = philosopher->time_to_eat;
 	time_to_think = 1;
@@ -176,14 +177,14 @@ static int	think(t_philosopher *philosopher)
 			pthread_mutex_unlock(philosopher->print);
 			return (0);
 		}
-		gettimeofday(philosopher->now, NULL);
-		printf("%ld %d is thinking\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+		printf("%ld %d is thinking\n",now_time(philosopher), philosopher->index);
 		pthread_mutex_unlock(philosopher->print);
 	}
-	gettimeofday(philosopher->now, NULL);
-	if (diff_time(philosopher->now, philosopher->last_time_eaten) + time_to_think > philosopher->time_to_die)
+	gettimeofday(&now, NULL);
+	now_ms = ((now.tv_sec * 1000) + (now.tv_usec / 1000)) - *(philosopher->time_of_day_start);
+	if ((now_ms - philosopher->last_time_eaten) + time_to_think > philosopher->time_to_die)
 	{
-		usleep(philosopher->time_to_die - diff_time(philosopher->last_time_eaten, philosopher->time_of_day_start));
+		usleep(philosopher->time_to_die - philosopher->last_time_eaten);
 		return (1);
 	}
 	//usleep(time_to_think * 1000);
@@ -198,7 +199,7 @@ static void	*start_routine(void	*arg)
 
 	philosopher = (t_philosopher *)arg;
 	//init last_time_eaten to start time
-	gettimeofday(philosopher->last_time_eaten, NULL);
+	philosopher->last_time_eaten = now_time(philosopher);
 	//wait for all threads to be created
 	pthread_mutex_lock(philosopher->print);
 	pthread_mutex_unlock(philosopher->print);
@@ -250,18 +251,11 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	philo->philosopher[i]->time_to_sleep = philo->time_to_sleep;
 	philo->philosopher[i]->nb_times_to_eat = philo->nb_times_to_eat;
 	philo->philosopher[i]->forks = philo->forks;
-	philo->philosopher[i]->time_of_day_start = philo->time_of_day_start;
-	philo->philosopher[i]->now = philo->now;
+	philo->philosopher[i]->time_of_day_start = &philo->time_of_day_start;
 	philo->philosopher[i]->print = philo->print;
 	philo->philosopher[i]->toggle_fork = philo->toggle_fork;
 	philo->philosopher[i]->index = i + 1;
 	philo->philosopher[i]->nb_times_eaten = 0;
-	philo->philosopher[i]->last_time_eaten = malloc(sizeof(struct timeval));
-	if (!philo->philosopher[i]->last_time_eaten)
-	{
-		free_philo(philo);
-		return (write_error("Error\nMalloc of last_time_eaten timeval structure failed\n"));
-	}
 	philo->philosopher[i]->state_philo = START;
 	philo->philosopher[i]->philo_died = &philo->philo_died;
 	philo->philosopher[i]->philosopher = philo->philosopher;
@@ -296,7 +290,7 @@ int	init_threads(t_philo *philo)
 		}
 		i++;
 	}
-	gettimeofday(philo->time_of_day_start, NULL);
+	init_start_time(philo);
 	pthread_mutex_unlock(philo->print);
 	return (0);
 }

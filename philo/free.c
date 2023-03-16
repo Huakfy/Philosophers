@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 15:05:19 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:05:12 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,11 @@ void	free_philo(t_philo *philo)
 	i = 0;
 	while (i < philo->nb_philo && philo->philosopher && philo->philosopher[i])
 	{
-		if (philo->philosopher[i]->last_time_eaten)
-			free(philo->philosopher[i]->last_time_eaten);
 		free(philo->philosopher[i]);
 		i++;
 	}
 	if (philo->philosopher)
 		free(philo->philosopher);
-	if (philo->time_of_day_start)
-		free(philo->time_of_day_start);
-	if (philo->now)
-		free(philo->now);
 	free_mutexes(philo);
 	free(philo);
 }
