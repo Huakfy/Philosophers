@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/15 17:29:53 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 11:13:54 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ static long	diff_time(struct timeval *time1, struct timeval *time2)
 
 static void	*die(t_philosopher *philosopher)
 {
-	*(philosopher->philo_died) = 1;
 	pthread_mutex_lock(philosopher->print);
 	if ((*philosopher->philo_died) == 1)
 	{
@@ -33,8 +32,9 @@ static void	*die(t_philosopher *philosopher)
 	}
 	gettimeofday(philosopher->now, NULL);
 	printf("%ld %d died\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
-	pthread_mutex_unlock(philosopher->print);
+	*(philosopher->philo_died) = 1;
 	philosopher->state_philo = DEAD;
+	pthread_mutex_unlock(philosopher->print);
 	return (NULL);
 }
 
@@ -182,7 +182,8 @@ static int	think(t_philosopher *philosopher)
 		printf("%ld %d is thinking\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 		pthread_mutex_unlock(philosopher->print);
 	}
-	if (diff_time(philosopher->last_time_eaten, philosopher->time_of_day_start) + time_to_think > philosopher->time_to_die)
+	gettimeofday(philosopher->now, NULL);
+	if (diff_time(philosopher->now, philosopher->last_time_eaten) + time_to_think > philosopher->time_to_die)
 	{
 		usleep(philosopher->time_to_die - diff_time(philosopher->last_time_eaten, philosopher->time_of_day_start));
 		return (1);
@@ -207,7 +208,7 @@ static void	*start_routine(void	*arg)
 		//If 2 forks are available take them
 		if (*(philosopher->philo_died) == 1)
 			return (NULL);
-		if (forks_available(philosopher))
+		if (philosopher->nb_philo > 1 && forks_available(philosopher))
 		{
 			//eat
 			if (*(philosopher->philo_died) == 1)
