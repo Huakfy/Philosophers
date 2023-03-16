@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 11:13:54 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 11:26:20 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,8 @@ static void	*start_routine(void	*arg)
 	//wait for all threads to be created
 	pthread_mutex_lock(philosopher->print);
 	pthread_mutex_unlock(philosopher->print);
+	if (philosopher->nb_times_to_eat == 0)
+		return (NULL);
 	while (1)
 	{
 		//If 2 forks are available take them
@@ -273,7 +275,6 @@ int	init_threads(t_philo *philo)
 {
 	int	i;
 
-	printf("time to die: %d time to eat: %d time to sleep: %d nb times to eat: %d\n", philo->time_to_die, philo->time_to_eat, philo->time_to_sleep, philo->nb_times_to_eat);
 	pthread_mutex_lock(philo->print);//Lock wathever mutex to wait for every thread to be created
 	i = 0;
 	while (i < philo->nb_philo)
