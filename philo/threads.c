@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 11:26:20 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/16 11:59:16 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,6 @@ static void	verify_nb_times_eaten(t_philosopher *philosopher)
 
 static int	eat(t_philosopher *philosopher)
 {
-	//if sleep->eat print thinking before
-	philosopher->state_philo = EATING;
 	pthread_mutex_lock(philosopher->print);
 	if ((*philosopher->philo_died) == 1)
 	{
@@ -80,6 +78,9 @@ static int	eat(t_philosopher *philosopher)
 		return (0);
 	}
 	gettimeofday(philosopher->now, NULL);
+	if (philosopher->state_philo == SLEEPING)
+		printf("%ld %d is thinking\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
+	philosopher->state_philo = EATING;
 	printf("%ld %d is eating\n",diff_time(philosopher->now, philosopher->time_of_day_start), philosopher->index);
 	philosopher->nb_times_eaten++;
 	verify_nb_times_eaten(philosopher);
@@ -188,7 +189,8 @@ static int	think(t_philosopher *philosopher)
 		usleep(philosopher->time_to_die - diff_time(philosopher->last_time_eaten, philosopher->time_of_day_start));
 		return (1);
 	}
-	usleep(time_to_think * 1000);
+	//usleep(time_to_think * 1000);
+	usleep(time_to_think);
 	philosopher->state_philo = THINKING;
 	return (0);
 }
@@ -210,7 +212,7 @@ static void	*start_routine(void	*arg)
 		//If 2 forks are available take them
 		if (*(philosopher->philo_died) == 1)
 			return (NULL);
-		if (philosopher->nb_philo > 1 && forks_available(philosopher))
+		if (philosopher->nb_philo > 1 && (philosopher->state_philo == THINKING || philosopher->state_philo == START) && forks_available(philosopher))
 		{
 			//eat
 			if (*(philosopher->philo_died) == 1)
