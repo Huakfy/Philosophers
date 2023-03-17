@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 17:27:17 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:27:37 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	*die(t_philosopher *philosopher);
 //forks_utils.c
 int		forks_available(t_philosopher *philosopher);
 void	put_down_forks(t_philosopher *philosopher);
+int		think_sleep(t_philosopher *philosopher);
 
 //time.c
 int		init_start_time(t_philo *philo);

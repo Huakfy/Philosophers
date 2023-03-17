@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 11:29:22 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 13:21:11 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static void	*start_routine(void	*arg)
 	{
 		if (*(philosopher->philo_died) == 1)
 			return (NULL);
+		if ((now_time(philosopher) - philosopher->last_time_eaten) >= philosopher->time_to_die)
+			return (die(philosopher));
 		if (philosopher->nb_philo > 1 && (philosopher->state_philo == THINKING
 			|| philosopher->state_philo == START) && forks_available(philosopher))
 		{

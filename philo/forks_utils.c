@@ -6,11 +6,39 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:11:24 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 11:22:36 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 13:31:29 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int	think_sleep(t_philosopher *philosopher)
+{
+	long			now_ms;
+	long			verify_time;
+
+	now_ms = now_time(philosopher);
+	if (((now_ms - philosopher->last_time_eaten) + philosopher->time_to_eat) > philosopher->time_to_die)
+	{
+		verify_time = philosopher->time_to_die - ((now_ms - philosopher->last_time_eaten) + philosopher->time_to_eat);
+		printf("%ld\n", verify_time);
+		if (verify_time >= 0)
+		{
+			usleep(verify_time * 1000);
+			return (1);
+		}
+		verify_time = philosopher->time_to_die - (now_ms - philosopher->last_time_eaten);
+		printf("%ld\n", verify_time);
+		if (verify_time >= 0)
+		{
+			usleep(verify_time * 1000);
+			return (1);
+		}
+		return (1);
+	}
+	usleep(philosopher->time_to_eat * 1000);
+	return (0);
+}
 
 static void	take_fork(t_state *fork, t_philosopher *philosopher)
 {
