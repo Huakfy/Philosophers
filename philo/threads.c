@@ -6,12 +6,16 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 14:19:14 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:43:07 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+//Only called in start_routine but is here because norm.
+//Waits for every thread to be created before starting (mutex).
+//Initialize last_time_eaten to the current time.
+//Checks if nb_times_to_eat == 0 in which case the thread can already be closed
 static int	norm_wait(t_philosopher	*philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
@@ -22,6 +26,9 @@ static int	norm_wait(t_philosopher	*philosopher)
 	return (0);
 }
 
+//Only called in start_routine but is here because norm.
+//If forks are available eat and put down the forks
+//before sleeping.
 static int	norm_eat(t_philosopher	*philosopher)
 {
 	if (*(philosopher->philo_died) == 1)
@@ -44,6 +51,9 @@ static int	norm_eat(t_philosopher	*philosopher)
 	return (0);
 }
 
+//Wait for every thread to be created before starting.
+//Starts the while true loop. Check everytime for a philosopher's death.
+//Think while forks aren't available, else eat and sleep.
 static void	*start_routine(void	*arg)
 {
 	t_philosopher	*philosopher;
@@ -73,7 +83,7 @@ static void	*start_routine(void	*arg)
 	return (NULL);
 }
 
-//Initiate all values
+//Initiate all values of each philosopher
 static int	init_philosopher_values(t_philo *philo, int i)
 {
 	philo->philosopher[i]->nb_philo = philo->nb_philo;
@@ -93,11 +103,10 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	return (0);
 }
 
-//Lock wathever mutex to wait for every thread to be created
-//Create a philosopher structure for each philosopher, initialize their values
-//Create the threads
-//Initialize start time
-//Wait for evzey threads to be created and start threads
+//Lock wathever mutex to wait for every thread to be created.
+//Create a philosopher structure for each philosopher, initialize their values.
+//Create the threads, initialize start time.
+//Wait for evzey threads to be created and start threads.
 int	init_threads(t_philo *philo)
 {
 	int	i;

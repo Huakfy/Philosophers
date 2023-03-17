@@ -6,12 +6,16 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:11:24 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 14:13:59 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 17:53:39 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+//This function is only called in the think function of the eat_sleep_think.c
+//file and is here for norms purposes.
+//It's goal is to make the philosopher wait the appropriate amount of time in
+//the case where it should die while waiting for available forks.
 int	think_sleep(t_philosopher *philosopher)
 {
 	long	now_ms;
@@ -41,6 +45,10 @@ int	think_sleep(t_philosopher *philosopher)
 	return (0);
 }
 
+//This function is only called in forks_available right under.
+//We first check if a philospher died while waiting for the mutex in which case
+//we don't do anything.
+//Else we print philosopher has taken a fork and set the fork's enum as USED.
 static void	take_fork(t_state *fork, t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
@@ -55,6 +63,12 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 	pthread_mutex_unlock(philosopher->print);
 }
 
+//This function's goal is to check the availability of the philosopher's right
+//and left hand side's forks. In my code fork[0] is at the left hand side of
+//philosopher N°1 which means that fork[0] is also philosopher N°nb_philo's
+//right fork which is why this function is divided in two (thus avoiding
+//segfault). If the two forks are available we lock each of their mutexes and
+//call take_fork.
 int	forks_available(t_philosopher *philosopher)
 {
 	if (philosopher->index != philosopher->nb_philo
@@ -84,6 +98,8 @@ int	forks_available(t_philosopher *philosopher)
 	return (0);
 }
 
+//After eating and waiting time_to_eat the phiosopher can put the forks down.
+//We simply set the forks back to available and unlock each of their mutexes.
 void	put_down_forks(t_philosopher *philosopher)
 {
 	if (philosopher->index != philosopher->nb_philo)

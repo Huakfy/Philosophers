@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 12:27:37 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:18:37 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@
 //for threads
 #include <pthread.h>
 
+//This enumeration is used to see the availability of forks
 typedef enum	e_state
 {
 	AVAILABLE,
 	USED
 }	t_state;
 
+//this enumeration is used to see the state of each philosopher
 typedef enum	e_philo_state
 {
 	START,
@@ -39,6 +41,7 @@ typedef enum	e_philo_state
 	DEAD
 }	t_state_philo;
 
+//Structure for each philosopher
 typedef struct s_philosopher
 {
 	//arguments
@@ -49,7 +52,7 @@ typedef struct s_philosopher
 	int						nb_times_to_eat;
 	//enum to know forks state
 	t_state					*forks;
-	//time of threads start
+	//time of threads's start
 	long					*time_of_day_start;
 	//mutexes
 	pthread_mutex_t			*print;
@@ -64,6 +67,7 @@ typedef struct s_philosopher
 	struct s_philosopher	**philosopher;
 }	t_philosopher;
 
+//Arguments structure
 typedef struct s_philo
 {
 	//arguments

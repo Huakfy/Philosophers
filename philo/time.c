@@ -6,13 +6,13 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:13:54 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 17:27:08 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:44:07 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-//Get current epoch time of start
+//Get current epoch time of start (in ms).
 int	init_start_time(t_philo *philo)
 {
 	struct timeval	start;
@@ -26,6 +26,7 @@ int	init_start_time(t_philo *philo)
 	return (0);
 }
 
+//Returns current time elapsed since beginning of threads (in ms).
 long	now_time(t_philosopher *philosopher)
 {
 	struct timeval	now;

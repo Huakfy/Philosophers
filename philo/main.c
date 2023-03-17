@@ -6,12 +6,18 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 11:39:19 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:11:58 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+//Parsing parses every argument, checks for error and initializes philo's
+//values to arg or NULL.
+//Init_prerequisites mallocs every value of philo.
+//Init_threads sets the right value for each element of each philosopher and
+//start the threads.
+//Finally free philo frees everything that needs to.
 int	main(int argc, char **argv)
 {
 	t_philo	*philo;
@@ -25,7 +31,6 @@ int	main(int argc, char **argv)
 		return (2);
 	if (init_threads(philo))
 		return (3);
-
 	free_philo(philo);
 	return (0);
 }

@@ -6,12 +6,13 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 16:05:12 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 17:58:37 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+//We first wait for every thread to end before freeing threads pointer
 static void	free_threads(t_philo *philo)
 {
 	int	i;
@@ -28,6 +29,7 @@ static void	free_threads(t_philo *philo)
 	}
 }
 
+//We destroy and free every mutex as well as toggle_fork pointer
 static void	free_mutexes(t_philo *philo)
 {
 	int	i;
@@ -50,6 +52,8 @@ static void	free_mutexes(t_philo *philo)
 	}
 }
 
+//This function's goal is to be called at any time in the program (after
+//philo has been malloced) and to free anything that has been malloced
 void	free_philo(t_philo *philo)
 {
 	int	i;

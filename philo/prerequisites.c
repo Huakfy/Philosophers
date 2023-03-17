@@ -6,13 +6,14 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 16:52:53 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:20:41 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 //Create state array to know current state of each fork (available / used)
+//and itializes them to available
 static int	init_forks(t_philo *philo)
 {
 	int	i;
@@ -32,6 +33,7 @@ static int	init_forks(t_philo *philo)
 	return (0);
 }
 
+//Mallocs and intialize every fork's mutex
 static int	init_mutex_toggle_fork(t_philo *philo)
 {
 	int	i;
@@ -52,7 +54,7 @@ static int	init_mutex_toggle_fork(t_philo *philo)
 	return (0);
 }
 
-//Create mutexs
+//Create mutexes
 static int	init_mutex(t_philo *philo)
 {
 	philo->print = malloc(sizeof(pthread_mutex_t));

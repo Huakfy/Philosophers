@@ -6,12 +6,15 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 14:06:17 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 17:44:21 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+//Each time a philosopher eats, we check if everyone of them ate at least
+//nb_times_to_eat times in which case we set philo_died to 1 to stop every
+//thread.
 static void	verify_nb_times_eaten(t_philosopher *philosopher)
 {
 	int	i;
@@ -30,6 +33,12 @@ static void	verify_nb_times_eaten(t_philosopher *philosopher)
 	return ;
 }
 
+//Eat
+//We first check if a philosopher died while waiting at the mutex then we print
+//philospher is thinking in case he is still sleeping (this should not happen
+//since I added a new condition in the routine).
+//We then print philosopher is eating and wait time_to_eat or less (if
+//time_to_eat >= time_to_die) in which case the philosopher dies.
 int	eat(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
@@ -56,6 +65,11 @@ int	eat(t_philosopher *philosopher)
 	return (0);
 }
 
+//Sleep
+//In my case sleep always happens after eating (if philosopher didn't die)
+//We first check if a philosopher died while waiting at the mutex then we print
+//philosopher is sleeping and wait time_to_sleep or less (if time_to_eat +
+//time_to_sleep >= time_to_die) in which case the philosopher dies.
 int	philo_sleep(t_philosopher *philosopher)
 {
 	philosopher->state_philo = SLEEPING;
@@ -77,6 +91,15 @@ int	philo_sleep(t_philosopher *philosopher)
 	return (0);
 }
 
+//Think
+//Thinking happens either after sleeping or as first action (if forks aren't
+//available).
+//We first check if a philosopher died while waiting at the mutex then if the
+//philosopher wasn't already thinking we print philosopher is thinking then if
+//there is an odd number of philosophers we wait time_to_eat or less.
+//If the philosopher was already thinking and is just in a loop waiting for
+//forks to be available we check if he is supposed to die and make him sleep
+//1µs before letting him check for forks again.
 int	think(t_philosopher *philosopher)
 {
 	if (philosopher->state_philo != THINKING)
@@ -104,6 +127,9 @@ int	think(t_philosopher *philosopher)
 	return (0);
 }
 
+//Die
+//We first verify if an other philosopher didn't die at the same time in which
+//case we do not print this philospher's death.
 void	*die(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);

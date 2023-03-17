@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 11:31:35 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 16:46:50 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:24:18 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static int	ft_atoi(const char *str)
 	return ((int)result);
 }
 
-//Init values
+//Init values of philo
 static int	init_values(t_philo	*philo, char **argv)
 {
 	philo->nb_times_to_eat = -1;
@@ -81,6 +81,9 @@ static int	init_values(t_philo	*philo, char **argv)
 }
 
 //Parsing
+//We only accept 5 or 6 arguments that are composed of only numbers (no
+//negatives, no +, no whitespace, etc...). Initialize the values of philo
+//and write an error if nb_philo == 0.
 int	parsing(int argc, char **argv, t_philo *philo)
 {
 	if (argc < 5 || argc > 6)
