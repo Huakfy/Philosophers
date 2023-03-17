@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 11:49:18 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:10:47 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,20 @@ int	think(t_philosopher *philosopher)
 		philosopher->state_philo = THINKING;
 		//sleep temps restant si mourrir pendant think
 		if (philosopher->nb_philo % 2 != 0)
+		{
+			gettimeofday(&now, NULL);
+			now_ms = (((now.tv_sec * 1000) + (now.tv_usec / 1000))) - *(philosopher->time_of_day_start);
+			if (((now_ms - philosopher->last_time_eaten) + philosopher->time_to_eat) > philosopher->time_to_die)
+			{
+				usleep((((now_ms - philosopher->last_time_eaten) + philosopher->time_to_eat) - philosopher->time_to_die) * 1000);
+				return (1);
+			}
 			usleep(philosopher->time_to_eat * 1000);
+		}
 	}
 	gettimeofday(&now, NULL);
 	now_ms = (((now.tv_sec * 1000) + (now.tv_usec / 1000))) - *(philosopher->time_of_day_start);
-	if (((now_ms - philosopher->last_time_eaten)) > philosopher->time_to_die)
+	if ((now_ms - philosopher->last_time_eaten) > philosopher->time_to_die)
 		return (1);
 	//usleep(1000);
 	return (0);
