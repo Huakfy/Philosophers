@@ -6,53 +6,69 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 13:21:11 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 14:19:14 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static int	norm_wait(t_philosopher	*philosopher)
+{
+	pthread_mutex_lock(philosopher->print);
+	pthread_mutex_unlock(philosopher->print);
+	philosopher->last_time_eaten = now_time(philosopher);
+	if (philosopher->nb_times_to_eat == 0)
+		return (1);
+	return (0);
+}
+
+static int	norm_eat(t_philosopher	*philosopher)
+{
+	if (*(philosopher->philo_died) == 1)
+		return (1);
+	if (eat(philosopher))
+	{
+		put_down_forks(philosopher);
+		if (*(philosopher->philo_died) == 0)
+			die(philosopher);
+		return (1);
+	}
+	put_down_forks(philosopher);
+	if (*(philosopher->philo_died) == 1)
+		return (1);
+	if (philo_sleep(philosopher))
+	{
+		die(philosopher);
+		return (1);
+	}
+	return (0);
+}
 
 static void	*start_routine(void	*arg)
 {
 	t_philosopher	*philosopher;
 
 	philosopher = (t_philosopher *)arg;
-	pthread_mutex_lock(philosopher->print);
-	pthread_mutex_unlock(philosopher->print);
-	philosopher->last_time_eaten = now_time(philosopher);
-	if (philosopher->nb_times_to_eat == 0)
+	if (norm_wait(philosopher))
 		return (NULL);
 	while (1)
 	{
 		if (*(philosopher->philo_died) == 1)
 			return (NULL);
-		if ((now_time(philosopher) - philosopher->last_time_eaten) >= philosopher->time_to_die)
+		if ((now_time(philosopher) - philosopher->last_time_eaten)
+			>= philosopher->time_to_die)
 			return (die(philosopher));
 		if (philosopher->nb_philo > 1 && (philosopher->state_philo == THINKING
-			|| philosopher->state_philo == START) && forks_available(philosopher))
+			|| philosopher->state_philo == START)
+			&& forks_available(philosopher))
 		{
-			if (*(philosopher->philo_died) == 1)
+			if (norm_eat(philosopher))
 				return (NULL);
-			if (eat(philosopher))
-			{
-				put_down_forks(philosopher);
-				if (*(philosopher->philo_died) == 0)
-					die(philosopher);
-				return (NULL);
-			}
-			put_down_forks(philosopher);
-			if (*(philosopher->philo_died) == 1)
-				return (NULL);
-			if (philo_sleep(philosopher))
-				return (die(philosopher));
 		}
-		else
-		{
-			if (*(philosopher->philo_died) == 1)
-				return (NULL);
-			if (think(philosopher))
-				return (die(philosopher));
-		}
+		else if (*(philosopher->philo_died) == 1)
+			return (NULL);
+		else if (think(philosopher))
+			return (die(philosopher));
 	}
 	return (NULL);
 }
@@ -94,11 +110,13 @@ int	init_threads(t_philo *philo)
 		if (!philo->philosopher[i])
 		{
 			free_philo(philo);
-			return (write_error("Error\nPhilosopher structure malloc failed\n"));
+			return (write_error(
+				"Error\nPhilosopher structure malloc failed\n"));
 		}
 		if (init_philosopher_values(philo, i))
 			return (1);
-		if (pthread_create(&philo->threads[i], NULL, &start_routine, philo->philosopher[i]) == -1)
+		if (pthread_create(&philo->threads[i], NULL, &start_routine,
+			philo->philosopher[i]) == -1)
 		{
 			free_philo(philo);
 			return (write_error("Error\nThread creation failed\n"));
