@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 17:19:45 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 11:49:18 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,16 @@ int	think(t_philosopher *philosopher)
 		}
 		printf("%ld %d is thinking\n",now_time(philosopher), philosopher->index);
 		pthread_mutex_unlock(philosopher->print);
+		philosopher->state_philo = THINKING;
+		//sleep temps restant si mourrir pendant think
+		if (philosopher->nb_philo % 2 != 0)
+			usleep(philosopher->time_to_eat * 1000);
 	}
 	gettimeofday(&now, NULL);
-	now_ms = ((now.tv_sec * 1000) + (now.tv_usec / 1000)) - *(philosopher->time_of_day_start);
-	if ((now_ms - philosopher->last_time_eaten) > philosopher->time_to_die)
+	now_ms = (((now.tv_sec * 1000) + (now.tv_usec / 1000))) - *(philosopher->time_of_day_start);
+	if (((now_ms - philosopher->last_time_eaten)) > philosopher->time_to_die)
 		return (1);
-	philosopher->state_philo = THINKING;
+	//usleep(1000);
 	return (0);
 }
 

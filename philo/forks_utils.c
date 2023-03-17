@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:11:24 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 17:12:01 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 11:22:36 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int	forks_available(t_philosopher *philosopher)
 			&& philosopher->forks[philosopher->index] == AVAILABLE)
 		{
 			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
-			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
 			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index]);
+			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
 			take_fork(&philosopher->forks[philosopher->index], philosopher);
 			return (1);
 		}
@@ -45,8 +45,8 @@ int	forks_available(t_philosopher *philosopher)
 			&& philosopher->forks[0] == AVAILABLE)
 		{
 			pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
-			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
 			pthread_mutex_lock(philosopher->toggle_fork[0]);
+			take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
 			take_fork(&philosopher->forks[0], philosopher);
 			return (1);
 		}

@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 17:19:28 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 11:29:22 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,17 @@ static void	*start_routine(void	*arg)
 	t_philosopher	*philosopher;
 
 	philosopher = (t_philosopher *)arg;
-	philosopher->last_time_eaten = now_time(philosopher);
 	pthread_mutex_lock(philosopher->print);
 	pthread_mutex_unlock(philosopher->print);
+	philosopher->last_time_eaten = now_time(philosopher);
 	if (philosopher->nb_times_to_eat == 0)
 		return (NULL);
 	while (1)
 	{
 		if (*(philosopher->philo_died) == 1)
 			return (NULL);
-		if (philosopher->nb_philo > 1 && (philosopher->state_philo == THINKING || philosopher->state_philo == START) && forks_available(philosopher))
+		if (philosopher->nb_philo > 1 && (philosopher->state_philo == THINKING
+			|| philosopher->state_philo == START) && forks_available(philosopher))
 		{
 			if (*(philosopher->philo_died) == 1)
 				return (NULL);

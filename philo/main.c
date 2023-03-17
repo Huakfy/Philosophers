@@ -6,11 +6,9 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/16 15:30:21 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/17 11:39:19 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//possibilité remove forks AVAILABLE/USED
 
 #include "philo.h"
 
