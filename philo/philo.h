@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 18:18:37 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/20 11:22:24 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ typedef struct s_philosopher
 	long					*time_of_day_start;
 	//mutexes
 	pthread_mutex_t			*print;
-	pthread_mutex_t			**toggle_fork;
+	pthread_mutex_t			**fork;
+	pthread_mutex_t			*toggle_fork;
 	//philosopher's index
 	int						index;
 	//values to keep track of progress
@@ -84,7 +85,8 @@ typedef struct s_philo
 	pthread_t		*threads;
 	//mutexes
 	pthread_mutex_t	*print;
-	pthread_mutex_t	**toggle_fork;
+	pthread_mutex_t	**fork;
+	pthread_mutex_t	*toggle_fork;
 	//philosophers
 	t_philosopher	**philosopher;
 	//track if a philo died

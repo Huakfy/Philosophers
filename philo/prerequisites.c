@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 18:20:41 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/20 11:27:04 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,21 @@ static int	init_forks(t_philo *philo)
 }
 
 //Mallocs and intialize every fork's mutex
-static int	init_mutex_toggle_fork(t_philo *philo)
+static int	init_mutex_fork(t_philo *philo)
 {
 	int	i;
 
 	i = 0;
 	while (i < philo->nb_philo)
 	{
-		philo->toggle_fork[i] = NULL;
-		philo->toggle_fork[i] = malloc(sizeof(pthread_mutex_t));
-		if (!philo->toggle_fork[i])
+		philo->fork[i] = NULL;
+		philo->fork[i] = malloc(sizeof(pthread_mutex_t));
+		if (!philo->fork[i])
 		{
 			free_philo(philo);
-			return (write_error("Error\nToggle_fork mutex malloc failed\n"));
+			return (write_error("Error\nfork mutex malloc failed\n"));
 		}
-		pthread_mutex_init(philo->toggle_fork[i], NULL);
+		pthread_mutex_init(philo->fork[i], NULL);
 		i++;
 	}
 	return (0);
@@ -64,13 +64,20 @@ static int	init_mutex(t_philo *philo)
 		return (write_error("Error\nPrint mutex malloc failed\n"));
 	}
 	pthread_mutex_init(philo->print, NULL);
-	philo->toggle_fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
+	philo->toggle_fork = malloc(sizeof(pthread_mutex_t));
 	if (!philo->toggle_fork)
 	{
 		free_philo(philo);
 		return (write_error("Error\nToggle_fork mutex malloc failed\n"));
 	}
-	return (init_mutex_toggle_fork(philo));
+	pthread_mutex_init(philo->toggle_fork, NULL);
+	philo->fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
+	if (!philo->fork)
+	{
+		free_philo(philo);
+		return (write_error("Error\nfork mutex malloc failed\n"));
+	}
+	return (init_mutex_fork(philo));
 }
 
 //Create a thread for each philosopher

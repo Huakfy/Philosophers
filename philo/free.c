@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 17:58:37 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/20 11:23:38 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	free_threads(t_philo *philo)
 	}
 }
 
-//We destroy and free every mutex as well as toggle_fork pointer
+//We destroy and free every mutex as well as fork pointer
 static void	free_mutexes(t_philo *philo)
 {
 	int	i;
@@ -39,15 +39,20 @@ static void	free_mutexes(t_philo *philo)
 		pthread_mutex_destroy(philo->print);
 		free(philo->print);
 	}
-	if (philo->toggle_fork)
+	if (philo->fork)
 	{
 		i = 0;
-		while (i < philo->nb_philo && philo->toggle_fork[i])
+		while (i < philo->nb_philo && philo->fork[i])
 		{
-			pthread_mutex_destroy(philo->toggle_fork[i]);
-			free(philo->toggle_fork[i]);
+			pthread_mutex_destroy(philo->fork[i]);
+			free(philo->fork[i]);
 			i++;
 		}
+		free(philo->fork);
+	}
+	if (philo->toggle_fork)
+	{
+		pthread_mutex_destroy(philo->toggle_fork);
 		free(philo->toggle_fork);
 	}
 }

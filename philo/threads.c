@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 18:43:07 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/20 12:35:02 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static int	norm_wait(t_philosopher	*philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
 	pthread_mutex_unlock(philosopher->print);
+	if (philosopher->index % 2 == 0)
+		usleep(10);
 	philosopher->last_time_eaten = now_time(philosopher);
 	if (philosopher->nb_times_to_eat == 0)
 		return (1);
@@ -94,6 +96,7 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	philo->philosopher[i]->forks = philo->forks;
 	philo->philosopher[i]->time_of_day_start = &philo->time_of_day_start;
 	philo->philosopher[i]->print = philo->print;
+	philo->philosopher[i]->fork = philo->fork;
 	philo->philosopher[i]->toggle_fork = philo->toggle_fork;
 	philo->philosopher[i]->index = i + 1;
 	philo->philosopher[i]->nb_times_eaten = 0;

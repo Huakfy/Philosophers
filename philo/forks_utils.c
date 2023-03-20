@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:11:24 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 18:54:31 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/20 11:35:39 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,26 +71,30 @@ static void	take_fork(t_state *fork, t_philosopher *philosopher)
 //call take_fork.
 int	forks_available(t_philosopher *philosopher)
 {
+	pthread_mutex_lock(philosopher->toggle_fork);
 	if (philosopher->index != philosopher->nb_philo
 		&& philosopher->forks[philosopher->index - 1] == AVAILABLE
 		&& philosopher->forks[philosopher->index] == AVAILABLE)
 	{
-		pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
+		pthread_mutex_lock(philosopher->fork[philosopher->index - 1]);
 		take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
-		pthread_mutex_lock(philosopher->toggle_fork[philosopher->index]);
+		pthread_mutex_lock(philosopher->fork[philosopher->index]);
 		take_fork(&philosopher->forks[philosopher->index], philosopher);
+		pthread_mutex_unlock(philosopher->toggle_fork);
 		return (1);
 	}
 	else if (philosopher->index == philosopher->nb_philo
 		&& philosopher->forks[philosopher->index - 1] == AVAILABLE
 		&& philosopher->forks[0] == AVAILABLE)
 	{
-		pthread_mutex_lock(philosopher->toggle_fork[philosopher->index - 1]);
+		pthread_mutex_lock(philosopher->fork[philosopher->index - 1]);
 		take_fork(&philosopher->forks[philosopher->index - 1], philosopher);
-		pthread_mutex_lock(philosopher->toggle_fork[0]);
+		pthread_mutex_lock(philosopher->fork[0]);
 		take_fork(&philosopher->forks[0], philosopher);
+		pthread_mutex_unlock(philosopher->toggle_fork);
 		return (1);
 	}
+	pthread_mutex_unlock(philosopher->toggle_fork);
 	return (0);
 }
 
@@ -102,14 +106,14 @@ void	put_down_forks(t_philosopher *philosopher)
 	{
 		philosopher->forks[philosopher->index - 1] = AVAILABLE;
 		philosopher->forks[philosopher->index] = AVAILABLE;
-		pthread_mutex_unlock(philosopher->toggle_fork[philosopher->index - 1]);
-		pthread_mutex_unlock(philosopher->toggle_fork[philosopher->index]);
+		pthread_mutex_unlock(philosopher->fork[philosopher->index - 1]);
+		pthread_mutex_unlock(philosopher->fork[philosopher->index]);
 	}
 	else
 	{
 		philosopher->forks[philosopher->index - 1] = AVAILABLE;
 		philosopher->forks[0] = AVAILABLE;
-		pthread_mutex_unlock(philosopher->toggle_fork[philosopher->index - 1]);
-		pthread_mutex_unlock(philosopher->toggle_fork[0]);
+		pthread_mutex_unlock(philosopher->fork[philosopher->index - 1]);
+		pthread_mutex_unlock(philosopher->fork[0]);
 	}
 }
