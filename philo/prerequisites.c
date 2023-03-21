@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/20 11:27:04 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/21 11:52:02 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,18 +84,26 @@ static int	init_mutex(t_philo *philo)
 //Create a philosopher structure for each philosopher
 static int	init_threads_and_philosopher(t_philo *philo)
 {
+	int	i;
+
 	philo->threads = malloc(sizeof(pthread_t) * philo->nb_philo);
 	if (!philo->threads)
 	{
 		free_philo(philo);
 		return (write_error("Error\nThreads array malloc failed\n"));
 	}
+	i = -1;
+	while (++i < philo->nb_philo)
+		philo->threads[i] = 0;
 	philo->philosopher = malloc(sizeof(t_philosopher *) * philo->nb_philo);
 	if (!philo->philosopher)
 	{
 		free_philo(philo);
 		return (write_error("Error\nPhilosopher array malloc failed\n"));
 	}
+	i = -1;
+	while (++i < philo->nb_philo)
+		philo->philosopher[i] = NULL;
 	return (0);
 }
 
