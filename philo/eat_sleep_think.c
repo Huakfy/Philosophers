@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/20 12:30:47 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/21 11:14:43 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ static void	verify_nb_times_eaten(t_philosopher *philosopher)
 			return ;
 		i++;
 	}
+	//pthread_mutex_lock(philosopher->print);
 	*(philosopher->philo_died) = 1;
+	//pthread_mutex_unlock(philosopher->print);
 	return ;
 }
 
@@ -123,7 +125,6 @@ int	think(t_philosopher *philosopher)
 	if ((now_time(philosopher) - philosopher->last_time_eaten)
 		> philosopher->time_to_die)
 		return (1);
-	usleep(1);
 	return (0);
 }
 

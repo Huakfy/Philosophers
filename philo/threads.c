@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/20 15:45:00 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/21 11:10:19 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	norm_wait(t_philosopher	*philosopher)
 	pthread_mutex_unlock(philosopher->print);
 	philosopher->last_time_eaten = now_time(philosopher);
 	if (philosopher->index % 2 == 0)
-		usleep(10);
+		usleep(100);
 	if (philosopher->nb_times_to_eat == 0)
 		return (1);
 	return (0);
@@ -33,8 +33,13 @@ static int	norm_wait(t_philosopher	*philosopher)
 //before sleeping.
 static int	norm_eat(t_philosopher	*philosopher)
 {
+	pthread_mutex_lock(philosopher->print);
 	if (*(philosopher->philo_died) == 1)
+	{
+		pthread_mutex_unlock(philosopher->print);
 		return (1);
+	}
+	pthread_mutex_unlock(philosopher->print);
 	if (eat(philosopher))
 	{
 		put_down_forks(philosopher);
@@ -43,8 +48,13 @@ static int	norm_eat(t_philosopher	*philosopher)
 		return (1);
 	}
 	put_down_forks(philosopher);
+	pthread_mutex_lock(philosopher->print);
 	if (*(philosopher->philo_died) == 1)
+	{
+		pthread_mutex_unlock(philosopher->print);
 		return (1);
+	}
+	pthread_mutex_unlock(philosopher->print);
 	if (philo_sleep(philosopher))
 	{
 		die(philosopher);
@@ -65,8 +75,13 @@ static void	*start_routine(void	*arg)
 		return (NULL);
 	while (1)
 	{
+		pthread_mutex_lock(philosopher->print);
 		if (*(philosopher->philo_died) == 1)
+		{
+			pthread_mutex_unlock(philosopher->print);
 			return (NULL);
+		}
+		pthread_mutex_unlock(philosopher->print);
 		if ((now_time(philosopher) - philosopher->last_time_eaten)
 			>= philosopher->time_to_die)
 			return (die(philosopher));
@@ -77,8 +92,6 @@ static void	*start_routine(void	*arg)
 			if (norm_eat(philosopher))
 				return (NULL);
 		}
-		else if (*(philosopher->philo_died) == 1)
-			return (NULL);
 		else if (think(philosopher))
 			return (die(philosopher));
 	}

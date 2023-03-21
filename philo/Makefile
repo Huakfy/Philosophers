@@ -8,11 +8,13 @@ OBJS		=	${SRCS:.c=.o}
 
 CC			=	cc
 
+#CFLAGS		=	-g3 -fsanitize=thread -pthread -Wall -Werror -Wextra
 CFLAGS		=	-g3 -pthread -Wall -Werror -Wextra
+#CFLAGS		=	-pthread -Wall -Werror -Wextra
 
 RM			=	rm -f
 
-%.o: %.c ${HEADER}
+%.o: %.c ${HEADER} Makefile
 	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
 
 ${NAME}:	${OBJS}

@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:11:24 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/20 11:35:39 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/21 09:31:28 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ int	forks_available(t_philosopher *philosopher)
 //We simply set the forks back to available and unlock each of their mutexes.
 void	put_down_forks(t_philosopher *philosopher)
 {
+	pthread_mutex_lock(philosopher->toggle_fork);
 	if (philosopher->index != philosopher->nb_philo)
 	{
 		philosopher->forks[philosopher->index - 1] = AVAILABLE;
@@ -116,4 +117,5 @@ void	put_down_forks(t_philosopher *philosopher)
 		pthread_mutex_unlock(philosopher->fork[philosopher->index - 1]);
 		pthread_mutex_unlock(philosopher->fork[0]);
 	}
+	pthread_mutex_unlock(philosopher->toggle_fork);
 }
