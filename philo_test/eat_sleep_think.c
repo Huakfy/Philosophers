@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 11:18:13 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 14:40:39 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ int	eat(t_philosopher *philosopher)
 	pthread_mutex_lock(philosopher->print);
 	time = now_time(philosopher);
 	printf("%ld %d is eating\n", time, philosopher->index);
+	pthread_mutex_unlock(philosopher->print);
+	pthread_mutex_lock(philosopher->meal);
 	philosopher->nb_times_eaten++;
 	philosopher->last_time_eaten = time;
-	pthread_mutex_unlock(philosopher->print);
+	pthread_mutex_unlock(philosopher->meal);
 	if (philosopher->time_to_eat >= philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die) * 1000);
@@ -121,13 +123,13 @@ void	check_end_threads(t_philo *philo)
 		if (time - philo->philosopher[i]->last_time_eaten > philo->time_to_die)
 		{
 			pthread_mutex_lock(philo->death);
-			philo->philo_died = 1;
+		//	philo->philo_died = 1;
 			pthread_mutex_unlock(philo->death);
-			pthread_mutex_unlock(philo->meal);
-			pthread_mutex_lock(philo->print);
-			printf("%ld %d died\n", time, philo->philosopher[i]->index);
-			pthread_mutex_unlock(philo->print);
-			return ;
+		//	pthread_mutex_unlock(philo->meal);
+		//	pthread_mutex_lock(philo->print);
+		//	printf("%ld %d died\n", time, philo->philosopher[i]->index);
+		//	pthread_mutex_unlock(philo->print);
+		//	return ;
 		}
 		pthread_mutex_unlock(philo->meal);
 		i++;

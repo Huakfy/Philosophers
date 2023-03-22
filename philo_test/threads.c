@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 11:13:44 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 14:41:54 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ static void	*start_routine(void	*arg)
 	t_philosopher	*philosopher;
 
 	philosopher = (t_philosopher *)arg;
+	pthread_mutex_lock(philosopher->meal);
 	philosopher->last_time_eaten = now_time(philosopher);
+	pthread_mutex_unlock(philosopher->meal);
 	if (philosopher->nb_times_to_eat == 0)
 		return (NULL);
 	if (philosopher->nb_philo == 1)
