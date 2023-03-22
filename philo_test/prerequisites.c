@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/21 17:32:26 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 15:02:25 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,8 @@ static int	init_mutex_fork(t_philo *philo)
 	return (0);
 }
 
-//Create mutexes
-static int	init_mutex(t_philo *philo)
+static int	init_mutex2(t_philo *philo)
 {
-	philo->print = malloc(sizeof(pthread_mutex_t));
-	if (!philo->print)
-	{
-		free_philo(philo);
-		return (write_error("Error\nPrint mutex malloc failed\n"));
-	}
-	pthread_mutex_init(philo->print, NULL);
-
 	philo->meal = malloc(sizeof(pthread_mutex_t));
 	if (!philo->meal)
 	{
@@ -58,7 +49,21 @@ static int	init_mutex(t_philo *philo)
 		return (write_error("Error\nDeath mutex malloc failed\n"));
 	}
 	pthread_mutex_init(philo->death, NULL);
+	return (0);
+}
 
+//Create mutexes
+static int	init_mutex(t_philo *philo)
+{
+	philo->print = malloc(sizeof(pthread_mutex_t));
+	if (!philo->print)
+	{
+		free_philo(philo);
+		return (write_error("Error\nPrint mutex malloc failed\n"));
+	}
+	pthread_mutex_init(philo->print, NULL);
+	if (init_mutex2(philo))
+		return (1);
 	philo->fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
 	if (!philo->fork)
 	{

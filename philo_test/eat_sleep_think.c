@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 14:40:39 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 15:31:09 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ int	eat(t_philosopher *philosopher)
 	philosopher->state_philo = EATING;
 	pthread_mutex_lock(philosopher->print);
 	time = now_time(philosopher);
-	printf("%ld %d is eating\n", time, philosopher->index);
+	if (!check_death(philosopher))
+		printf("%ld %d is eating\n", time, philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	pthread_mutex_lock(philosopher->meal);
 	philosopher->nb_times_eaten++;
@@ -49,7 +50,9 @@ int	philo_sleep(t_philosopher *philosopher)
 {
 	philosopher->state_philo = SLEEPING;
 	pthread_mutex_lock(philosopher->print);
-	printf("%ld %d is sleeping\n",now_time(philosopher), philosopher->index);
+	if (!check_death(philosopher))
+		printf("%ld %d is sleeping\n", now_time(philosopher),
+			philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	if (philosopher->time_to_sleep + philosopher->time_to_eat
 		>= philosopher->time_to_die)
@@ -73,12 +76,13 @@ int	philo_sleep(t_philosopher *philosopher)
 int	think(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->print);
-	printf("%ld %d is thinking\n",now_time(philosopher),
-		philosopher->index);
+	if (!check_death(philosopher))
+		printf("%ld %d is thinking\n", now_time(philosopher),
+			philosopher->index);
 	pthread_mutex_unlock(philosopher->print);
 	philosopher->state_philo = THINKING;
 	usleep(((philosopher->time_to_die - (philosopher->time_to_eat
-		+ philosopher->time_to_sleep)) / 2) * 1000);
+					+ philosopher->time_to_sleep)) / 2) * 1000);
 	return (0);
 }
 
@@ -94,47 +98,4 @@ int	verify_nb_times_eaten(t_philo *philo)
 		i++;
 	}
 	return (1);
-}
-
-void	check_end_threads(t_philo *philo)
-{
-	int		i;
-	long	time;
-
-	i = 0;
-	while (1)
-	{
-		if (philo->nb_times_to_eat != -1)
-		{
-			pthread_mutex_lock(philo->meal);
-			time = now_time(philo->philosopher[i]);
-			if (verify_nb_times_eaten(philo))
-			{
-				pthread_mutex_lock(philo->death);
-				philo->philo_died = 1;
-				pthread_mutex_unlock(philo->death);
-				pthread_mutex_unlock(philo->meal);
-				return ;
-			}
-			pthread_mutex_unlock(philo->meal);
-		}
-		pthread_mutex_lock(philo->meal);
-		time = now_time(philo->philosopher[i]);
-		if (time - philo->philosopher[i]->last_time_eaten > philo->time_to_die)
-		{
-			pthread_mutex_lock(philo->death);
-		//	philo->philo_died = 1;
-			pthread_mutex_unlock(philo->death);
-		//	pthread_mutex_unlock(philo->meal);
-		//	pthread_mutex_lock(philo->print);
-		//	printf("%ld %d died\n", time, philo->philosopher[i]->index);
-		//	pthread_mutex_unlock(philo->print);
-		//	return ;
-		}
-		pthread_mutex_unlock(philo->meal);
-		i++;
-		if (i >= (philo->nb_philo - 1))
-			i = 0;
-		usleep (100);
-	}
 }

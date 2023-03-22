@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/21 14:16:04 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 15:43:08 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,20 @@ static void	free_threads(t_philo *philo)
 			i++;
 		}
 		free(philo->threads);
+	}
+}
+
+static void	free_mutexes2(t_philo *philo)
+{
+	if (philo->meal)
+	{
+		pthread_mutex_destroy(philo->meal);
+		free(philo->meal);
+	}
+	if (philo->death)
+	{
+		pthread_mutex_destroy(philo->death);
+		free(philo->death);
 	}
 }
 
@@ -50,16 +64,7 @@ static void	free_mutexes(t_philo *philo)
 		}
 		free(philo->fork);
 	}
-	if (philo->meal)
-	{
-		pthread_mutex_destroy(philo->meal);
-		free(philo->meal);
-	}
-	if (philo->death)
-	{
-		pthread_mutex_destroy(philo->death);
-		free(philo->death);
-	}
+	free_mutexes2(philo);
 }
 
 //This function's goal is to be called at any time in the program (after
