@@ -6,12 +6,13 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 15:18:17 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 15:49:22 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:29:04 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+//Checks if anyoone died
 int	check_death(t_philosopher	*philosopher)
 {
 	pthread_mutex_lock(philosopher->death);
@@ -24,6 +25,7 @@ int	check_death(t_philosopher	*philosopher)
 	return (0);
 }
 
+//Sets last_time_eaten to start_time and handles basic specific cases
 static int	init_routine(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->meal);
@@ -40,6 +42,8 @@ static int	init_routine(t_philosopher *philosopher)
 	return (0);
 }
 
+//Routine of a philosopher
+//Take forks, eat, put down forks, sleep, think and try not to die
 void	*start_routine(void *arg)
 {
 	t_philosopher	*philosopher;
@@ -66,6 +70,9 @@ void	*start_routine(void *arg)
 	return (NULL);
 }
 
+//Is used in check_end_threads (threads.c)
+//Checks if every philosopher ate enough times in which case philo_died is set
+//to 1 in order to stop every thread
 int	times_eaten(t_philo *philo, int i)
 {
 	long	time;
@@ -87,6 +94,9 @@ int	times_eaten(t_philo *philo, int i)
 	return (0);
 }
 
+//Is used in check_end_threads (threads.c)
+//Checks if any philosopher is supposed to die of starvation in which case
+//philo_died is set to 1 in order to stop every thread and philo died is printed
 int	time_death(t_philo *philo, int i)
 {
 	pthread_mutex_lock(philo->meal);

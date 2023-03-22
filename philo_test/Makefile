@@ -8,9 +8,9 @@ OBJS	=	${SRCS:.c=.o}
 
 CC		=	cc
 
-CFLAGS	=	-fsanitize=thread -pthread -Wall -Werror -Wextra
-#CFLAGS	=	-g3 -pthread -Wall -Werror -Wextra
-#CFLAGS	=	-pthread -Wall -Werror -Wextra
+#CFLAGS	=	-fsanitize=thread -pthread -Wall -Werror -Wextra #check data race
+#CFLAGS	=	-g3 -pthread -Wall -Werror -Wextra # check valgrind
+CFLAGS	=	-pthread -Wall -Werror -Wextra
 
 RM		=	rm -f
 

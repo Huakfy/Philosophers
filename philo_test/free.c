@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 15:43:08 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:21:46 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static void	free_threads(t_philo *philo)
 	}
 }
 
+//For norm purposes we need a secon function to free our mutexes.
 static void	free_mutexes2(t_philo *philo)
 {
 	if (philo->meal)

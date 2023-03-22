@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 15:47:36 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:02:25 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,6 @@
 # include <sys/time.h>
 //for threads
 # include <pthread.h>
-
-//this enumeration is used to see the state of each philosopher
-typedef enum e_philo_state
-{
-	START,
-	THINKING,
-	EATING,
-	SLEEPING
-}	t_state_philo;
 
 //Structure for each philosopher
 typedef struct s_philosopher
@@ -50,7 +41,6 @@ typedef struct s_philosopher
 	int				index;
 	int				nb_times_eaten;
 	long			last_time_eaten;
-	t_state_philo	state_philo;
 	int				*philo_died;
 }	t_philosopher;
 

@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 15:02:25 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:24:15 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static int	init_mutex_fork(t_philo *philo)
 	return (0);
 }
 
+//Create mutexes N2 (Norm)
 static int	init_mutex2(t_philo *philo)
 {
 	philo->meal = malloc(sizeof(pthread_mutex_t));

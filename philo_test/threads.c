@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 15:49:05 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:32:28 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	philo->philosopher[i]->death = philo->death;
 	philo->philosopher[i]->index = i + 1;
 	philo->philosopher[i]->nb_times_eaten = 0;
-	philo->philosopher[i]->state_philo = START;
 	philo->philosopher[i]->philo_died = &philo->philo_died;
 	philo->philosopher[i]->last_time_eaten = 0;
 	return (0);
 }
 
+//Starts philosopher threads with an even index
 int	start_even(t_philo *philo)
 {
 	int	i;
@@ -51,6 +51,7 @@ int	start_even(t_philo *philo)
 	return (0);
 }
 
+//Starts philosopher threads with an odd index
 int	start_odd(t_philo *philo)
 {
 	int	i;
@@ -69,10 +70,9 @@ int	start_odd(t_philo *philo)
 	return (0);
 }
 
-//Lock wathever mutex to wait for every thread to be created.
 //Create a philosopher structure for each philosopher, initialize their values.
-//Create the threads, initialize start time.
-//Wait for every threads to be created and start threads.
+//Initiate the start time and start the even index threads, sleepp 100 microsec
+//to let them take forks first before starting off index threads
 int	init_threads(t_philo *philo)
 {
 	int	i;
@@ -97,6 +97,8 @@ int	init_threads(t_philo *philo)
 	return (0);
 }
 
+//Loop called in main to stop threads after each philosopher ate enough times or
+//a philosopher died of starvation
 void	check_end_threads(t_philo *philo)
 {
 	int		i;
