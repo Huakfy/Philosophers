@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:11:24 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/21 18:06:53 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 11:04:33 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ int	forks_available(t_philosopher *philosopher)
 		pthread_mutex_lock(philosopher->fork[philosopher->index - 1]);
 		pthread_mutex_lock(philosopher->fork[philosopher->index % philosopher->nb_philo]);
 		if (check_death(philosopher))
-		put_down_forks(philosopher);
 		{
 			put_down_forks(philosopher);
 			return (1);

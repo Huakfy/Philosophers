@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/21 18:16:31 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 11:02:22 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static void	*start_routine(void	*arg)
 	t_philosopher	*philosopher;
 
 	philosopher = (t_philosopher *)arg;
-	printf("%d\n",philosopher->index);
 	philosopher->last_time_eaten = now_time(philosopher);
 	if (philosopher->nb_times_to_eat == 0)
 		return (NULL);
