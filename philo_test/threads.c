@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 11:02:22 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 11:13:44 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	philo->philosopher[i]->nb_times_eaten = 0;
 	philo->philosopher[i]->state_philo = START;
 	philo->philosopher[i]->philo_died = &philo->philo_died;
+	philo->philosopher[i]->last_time_eaten = 0;
 	return (0);
 }
 
