@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 16:02:25 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/23 10:15:36 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ long	now_time(t_philosopher *philosopher);
 //routine.c
 int		check_death(t_philosopher	*philosopher);
 void	*start_routine(void *arg);
-int		times_eaten(t_philo *philo, int i);
+int		times_eaten(t_philo *philo);
 int		time_death(t_philo *philo, int i);
 
 #endif

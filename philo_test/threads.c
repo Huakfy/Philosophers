@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 16:32:28 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/23 10:15:13 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,13 +106,13 @@ void	check_end_threads(t_philo *philo)
 	i = 0;
 	while (1)
 	{
-		if (times_eaten(philo, i))
+		if (times_eaten(philo))
 			return ;
 		if (time_death(philo, i))
 			return ;
 		i++;
 		if (i >= (philo->nb_philo - 1))
 			i = 0;
-		usleep (100);
+		usleep (10);
 	}
 }

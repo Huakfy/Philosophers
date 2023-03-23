@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 15:18:17 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 16:29:04 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/23 10:14:54 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,11 @@ void	*start_routine(void *arg)
 //Is used in check_end_threads (threads.c)
 //Checks if every philosopher ate enough times in which case philo_died is set
 //to 1 in order to stop every thread
-int	times_eaten(t_philo *philo, int i)
+int	times_eaten(t_philo *philo)
 {
-	long	time;
-
 	if (philo->nb_times_to_eat != -1)
 	{
 		pthread_mutex_lock(philo->meal);
-		time = now_time(philo->philosopher[i]);
 		if (verify_nb_times_eaten(philo))
 		{
 			pthread_mutex_lock(philo->death);
