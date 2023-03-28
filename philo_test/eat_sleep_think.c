@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:55:07 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/22 16:16:00 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/28 12:30:16 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ int	eat(t_philosopher *philosopher)
 	time = now_time(philosopher);
 	if (!check_death(philosopher))
 		printf("%ld %d is eating\n", time, philosopher->index);
-	pthread_mutex_unlock(philosopher->print);
 	pthread_mutex_lock(philosopher->meal);
 	philosopher->nb_times_eaten++;
 	philosopher->last_time_eaten = time;
 	pthread_mutex_unlock(philosopher->meal);
+	pthread_mutex_unlock(philosopher->print);
 	if (philosopher->time_to_eat >= philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die) * 1000);
