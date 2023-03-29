@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 15:18:17 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/23 10:14:54 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/29 15:25:55 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,15 @@ int	check_death(t_philosopher	*philosopher)
 static int	init_routine(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->meal);
+	if (check_death(philosopher))
+	{
+		pthread_mutex_unlock(philosopher->meal);
+		return (1);
+	}
 	philosopher->last_time_eaten = now_time(philosopher);
 	pthread_mutex_unlock(philosopher->meal);
+	if (philosopher->index % 2 == 1)
+		usleep(100);
 	if (philosopher->nb_times_to_eat == 0)
 		return (1);
 	if (philosopher->nb_philo == 1)

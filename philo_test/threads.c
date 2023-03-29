@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/29 14:33:16 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/29 15:26:07 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,42 +32,14 @@ static int	init_philosopher_values(t_philo *philo, int i)
 	return (0);
 }
 
-//Starts philosopher threads with an even index
-int	start_even(t_philo *philo)
+static int	error_thread(t_philo *philo)
 {
-	int	i;
-
-	i = 1;
-	while (i < philo->nb_philo)
-	{
-		if (pthread_create(&philo->threads[i], NULL, &start_routine,
-				philo->philosopher[i]) == -1)
-		{
-			free_philo(philo);
-			return (write_error("Error\nThread creation failed\n"));
-		}
-		i += 2;
-	}
-	return (0);
-}
-
-//Starts philosopher threads with an odd index
-int	start_odd(t_philo *philo)
-{
-	int	i;
-
-	i = 0;
-	while (i < philo->nb_philo)
-	{
-		if (pthread_create(&philo->threads[i], NULL, &start_routine,
-				philo->philosopher[i]) == -1)
-		{
-			free_philo(philo);
-			return (write_error("Error\nThread creation failed\n"));
-		}
-		i += 2;
-	}
-	return (0);
+	pthread_mutex_lock(philo->death);
+	philo->philo_died = 1;
+	pthread_mutex_unlock(philo->death);
+	pthread_mutex_unlock(philo->meal);
+	free_philo(philo);
+	return (write_error("Error\nThread creation failed\n"));
 }
 
 //Create a philosopher structure for each philosopher, initialize their values.
@@ -78,6 +50,7 @@ int	init_threads(t_philo *philo)
 	int	i;
 
 	i = 0;
+	pthread_mutex_lock(philo->meal);
 	while (i < philo->nb_philo)
 	{
 		philo->philosopher[i] = malloc(sizeof(t_philosopher));
@@ -88,14 +61,15 @@ int	init_threads(t_philo *philo)
 		}
 		if (init_philosopher_values(philo, i))
 			return (1);
+		if (pthread_create(&philo->threads[i], NULL, &start_routine,
+				philo->philosopher[i]) == -1)
+		{
+			return (error_thread(philo));
+		}
 		i++;
 	}
 	init_start_time(philo);
-	if (start_even(philo))
-		return (1);
-	usleep(100);
-	if (start_odd(philo))
-		return (1);
+	pthread_mutex_unlock(philo->meal);
 	return (0);
 }
 
