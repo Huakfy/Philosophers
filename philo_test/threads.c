@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 12:14:55 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/23 10:15:13 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/29 14:33:16 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,11 @@ int	init_threads(t_philo *philo)
 		i++;
 	}
 	init_start_time(philo);
-	start_even(philo);
+	if (start_even(philo))
+		return (1);
 	usleep(100);
-	start_odd(philo);
+	if (start_odd(philo))
+		return (1);
 	return (0);
 }
 
