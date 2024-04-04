@@ -6,32 +6,11 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:56:27 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/21 11:52:02 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:24:15 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-//Create state array to know current state of each fork (available / used)
-//and itializes them to available
-static int	init_forks(t_philo *philo)
-{
-	int	i;
-
-	philo->forks = malloc(sizeof(t_state) * philo->nb_philo);
-	if (!philo->forks)
-	{
-		free_philo(philo);
-		return (write_error("Error\nMalloc of forks enum array failed\n"));
-	}
-	i = 0;
-	while (i < philo->nb_philo)
-	{
-		philo->forks[i] = AVAILABLE;
-		i++;
-	}
-	return (0);
-}
 
 //Mallocs and intialize every fork's mutex
 static int	init_mutex_fork(t_philo *philo)
@@ -54,6 +33,26 @@ static int	init_mutex_fork(t_philo *philo)
 	return (0);
 }
 
+//Create mutexes N2 (Norm)
+static int	init_mutex2(t_philo *philo)
+{
+	philo->meal = malloc(sizeof(pthread_mutex_t));
+	if (!philo->meal)
+	{
+		free_philo(philo);
+		return (write_error("Error\nMeal mutex malloc failed\n"));
+	}
+	pthread_mutex_init(philo->meal, NULL);
+	philo->death = malloc(sizeof(pthread_mutex_t));
+	if (!philo->death)
+	{
+		free_philo(philo);
+		return (write_error("Error\nDeath mutex malloc failed\n"));
+	}
+	pthread_mutex_init(philo->death, NULL);
+	return (0);
+}
+
 //Create mutexes
 static int	init_mutex(t_philo *philo)
 {
@@ -64,13 +63,8 @@ static int	init_mutex(t_philo *philo)
 		return (write_error("Error\nPrint mutex malloc failed\n"));
 	}
 	pthread_mutex_init(philo->print, NULL);
-	philo->toggle_fork = malloc(sizeof(pthread_mutex_t));
-	if (!philo->toggle_fork)
-	{
-		free_philo(philo);
-		return (write_error("Error\nToggle_fork mutex malloc failed\n"));
-	}
-	pthread_mutex_init(philo->toggle_fork, NULL);
+	if (init_mutex2(philo))
+		return (1);
 	philo->fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philo);
 	if (!philo->fork)
 	{
@@ -110,7 +104,7 @@ static int	init_threads_and_philosopher(t_philo *philo)
 //Initialize every prerequisites
 int	init_prerequisites(t_philo *philo)
 {
-	if (init_forks(philo) || init_mutex(philo)
+	if (init_mutex(philo)
 		|| init_threads_and_philosopher(philo))
 		return (1);
 	return (0);

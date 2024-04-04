@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:23:02 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/17 18:11:58 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/21 17:34:03 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	main(int argc, char **argv)
 		return (2);
 	if (init_threads(philo))
 		return (3);
+	check_end_threads(philo);
 	free_philo(philo);
 	return (0);
 }

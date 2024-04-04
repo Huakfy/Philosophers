@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:32:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/21 10:52:54 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:21:46 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,21 @@ static void	free_threads(t_philo *philo)
 			i++;
 		}
 		free(philo->threads);
+	}
+}
+
+//For norm purposes we need a secon function to free our mutexes.
+static void	free_mutexes2(t_philo *philo)
+{
+	if (philo->meal)
+	{
+		pthread_mutex_destroy(philo->meal);
+		free(philo->meal);
+	}
+	if (philo->death)
+	{
+		pthread_mutex_destroy(philo->death);
+		free(philo->death);
 	}
 }
 
@@ -50,11 +65,7 @@ static void	free_mutexes(t_philo *philo)
 		}
 		free(philo->fork);
 	}
-	if (philo->toggle_fork)
-	{
-		pthread_mutex_destroy(philo->toggle_fork);
-		free(philo->toggle_fork);
-	}
+	free_mutexes2(philo);
 }
 
 //This function's goal is to be called at any time in the program (after
@@ -64,8 +75,6 @@ void	free_philo(t_philo *philo)
 	int	i;
 
 	free_threads(philo);
-	if (philo->forks)
-		free(philo->forks);
 	i = 0;
 	while (i < philo->nb_philo && philo->philosopher && philo->philosopher[i])
 	{

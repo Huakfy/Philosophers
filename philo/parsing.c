@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 11:31:35 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/20 11:24:32 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/21 14:13:56 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,12 @@ static int	init_values(t_philo	*philo, char **argv)
 		if (philo->nb_times_to_eat == -1)
 			return (1);
 	}
-	philo->forks = NULL;
 	philo->time_of_day_start = 0;
 	philo->threads = NULL;
 	philo->print = NULL;
 	philo->fork = NULL;
-	philo->toggle_fork = NULL;
+	philo->meal = NULL;
+	philo->death = NULL;
 	philo->philosopher = NULL;
 	philo->philo_died = 0;
 	return (0);

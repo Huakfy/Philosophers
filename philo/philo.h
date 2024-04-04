@@ -6,7 +6,7 @@
 /*   By: mjourno <mjourno@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:29:06 by mjourno           #+#    #+#             */
-/*   Updated: 2023/03/20 20:41:49 by mjourno          ###   ########.fr       */
+/*   Updated: 2023/03/23 10:15:36 by mjourno          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,74 +22,43 @@
 //for gettimeofday
 # include <sys/time.h>
 //for threads
-#include <pthread.h>
-
-//This enumeration is used to see the availability of forks
-typedef enum	e_state
-{
-	AVAILABLE,
-	USED
-}	t_state;
-
-//this enumeration is used to see the state of each philosopher
-typedef enum	e_philo_state
-{
-	START,
-	THINKING,
-	EATING,
-	SLEEPING,
-	DEAD
-}	t_state_philo;
+# include <pthread.h>
 
 //Structure for each philosopher
 typedef struct s_philosopher
 {
-	//arguments
-	int						nb_philo;
-	int						time_to_die;
-	int						time_to_eat;
-	int						time_to_sleep;
-	int						nb_times_to_eat;
-	//enum to know forks state
-	t_state					*forks;
-	//time of threads's start
-	long					*time_of_day_start;
-	//mutexes
-	pthread_mutex_t			*print;
-	pthread_mutex_t			**fork;
-	pthread_mutex_t			*toggle_fork;
-	//philosopher's index
-	int						index;
-	//values to keep track of progress
-	int						nb_times_eaten;
-	long					last_time_eaten;
-	t_state_philo			state_philo;
-	int						*philo_died;
-	struct s_philosopher	**philosopher;
-}	t_philosopher;
-
-//Arguments structure
-typedef struct s_philo
-{
-	//arguments
 	int				nb_philo;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				nb_times_to_eat;
-	//enum to know forks state
-	t_state			*forks;
-	//time of threads start
-	long			time_of_day_start;
-	//philosopher threads
-	pthread_t		*threads;
-	//mutexes
+	long			*time_of_day_start;
 	pthread_mutex_t	*print;
 	pthread_mutex_t	**fork;
 	pthread_mutex_t	*toggle_fork;
-	//philosophers
+	pthread_mutex_t	*meal;
+	pthread_mutex_t	*death;
+	int				index;
+	int				nb_times_eaten;
+	long			last_time_eaten;
+	int				*philo_died;
+}	t_philosopher;
+
+//Arguments structure
+typedef struct s_philo
+{
+	int				nb_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nb_times_to_eat;
+	long			time_of_day_start;
+	pthread_t		*threads;
+	pthread_mutex_t	*print;
+	pthread_mutex_t	**fork;
+	pthread_mutex_t	*meal;
+	pthread_mutex_t	*death;
 	t_philosopher	**philosopher;
-	//track if a philo died
 	int				philo_died;
 }	t_philo;
 
@@ -107,12 +76,13 @@ int		init_prerequisites(t_philo *philo);
 
 //threads.c
 int		init_threads(t_philo *philo);
+void	check_end_threads(t_philo *philo);
 
 //eat_sleep_think.c
 int		eat(t_philosopher *philosopher);
 int		philo_sleep(t_philosopher *philosopher);
 int		think(t_philosopher *philosopher);
-void	*die(t_philosopher *philosopher);
+int		verify_nb_times_eaten(t_philo *philo);
 
 //forks_utils.c
 int		forks_available(t_philosopher *philosopher);
@@ -122,5 +92,11 @@ int		think_sleep(t_philosopher *philosopher);
 //time.c
 int		init_start_time(t_philo *philo);
 long	now_time(t_philosopher *philosopher);
+
+//routine.c
+int		check_death(t_philosopher	*philosopher);
+void	*start_routine(void *arg);
+int		times_eaten(t_philo *philo);
+int		time_death(t_philo *philo, int i);
 
 #endif
